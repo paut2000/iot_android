@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    <TextView
+            android:id="@+id/name"
+            android:text="Реле: Название"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+            android:id="@+id/temperature_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Температура"
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+            android:id="@+id/humidity_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Влажность" app:layout_constraintTop_toBottomOf="@+id/temperature_view"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+            android:id="@+id/datetime_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Дата обновления" app:layout_constraintTop_toBottomOf="@+id/humidity_view"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+            android:id="@+id/error_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:text="Не подключен" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/name"/>
+
+</merge>

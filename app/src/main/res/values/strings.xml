@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Smart Home</string>
+
+    <string name="bottom_navigation_house">Дом</string>
+    <string name="bottom_navigation_groups">Группы</string>
+    <string name="bottom_navigation_statistic">Статистика</string>
+
+    <string name="fragment_title_house">Устройства</string>
+    <string name="fragment_title_groups">Группы устройств</string>
+    <string name="fragment_title_statistic">Статистика</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

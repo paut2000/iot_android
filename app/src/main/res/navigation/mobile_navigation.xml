@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/mobile_navigation"
+            app:startDestination="@id/house_page">
+
+    <fragment
+            android:id="@+id/house_page"
+            android:name="iot.android.client.ui.fragment.HomeFragment"
+            android:label="@string/fragment_title_house"
+            tools:layout="@layout/fragment_home"/>
+
+    <fragment
+            android:id="@+id/groups_page"
+            android:name="iot.android.client.ui.fragment.GroupsFragment"
+            android:label="@string/fragment_title_groups"
+            tools:layout="@layout/fragment_groups"/>
+
+    <fragment
+            android:id="@+id/statistic_page"
+            android:name="iot.android.client.ui.fragment.StatisticFragment"
+            android:label="@string/fragment_title_statistic"
+            tools:layout="@layout/fragment_statistic"/>
+
+</navigation>
