@@ -1,17 +1,15 @@
 package iot.android.client.ui.view;
 
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 import iot.android.client.R;
-import iot.android.client.callback.OnSuccessCallback;
 import iot.android.client.databinding.RgbaViewBinding;
 import iot.android.client.model.device.actuator.RGBAStrip;
 import iot.android.client.model.device.data.RGBAStripData;
@@ -90,7 +88,11 @@ public class RGBAStripView  extends ConstraintLayout {
     }
 
     private void setColorViewColor(RGBAStripData data) {
-        ((GradientDrawable) colorView.getBackground()).setColor(ColorConverter.RGBAtoInt(data));
+        if (data.getAlfa() != 0) {
+            colorView.getBackground().setTint(ColorConverter.RGBAtoInt(data));
+        } else {
+            colorView.getBackground().setTint(ResourcesCompat.getColor(getResources(), R.color.off_rgba, null));
+        }
     }
 
     private void refreshStatesOfAll() {

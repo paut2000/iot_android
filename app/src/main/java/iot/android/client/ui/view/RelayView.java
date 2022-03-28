@@ -3,6 +3,7 @@ package iot.android.client.ui.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -14,7 +15,7 @@ import iot.android.client.databinding.RelayViewBinding;
 import iot.android.client.model.device.actuator.Relay;
 import org.jetbrains.annotations.NotNull;
 
-public class RelayView extends ConstraintLayout {
+public class RelayView extends FrameLayout {
 
     private final Relay relay;
 

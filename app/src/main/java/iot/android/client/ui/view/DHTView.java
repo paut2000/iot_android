@@ -2,6 +2,7 @@ package iot.android.client.ui.view;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 
-public class DHTView extends ConstraintLayout {
+public class DHTView extends TableLayout {
 
     private final DHT dht;
 

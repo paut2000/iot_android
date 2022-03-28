@@ -3,17 +3,17 @@
 
     <item
             android:id="@+id/house_page"
-            android:icon="@drawable/ic_launcher_foreground"
+            android:icon="@drawable/home"
             android:title="@string/bottom_navigation_house"/>
 
     <item
             android:id="@+id/groups_page"
-            android:icon="@drawable/ic_launcher_foreground"
+            android:icon="@drawable/group"
             android:title="@string/bottom_navigation_groups"/>
 
     <item
             android:id="@+id/statistic_page"
-            android:icon="@drawable/ic_launcher_foreground"
+            android:icon="@drawable/statistic"
             android:title="@string/bottom_navigation_statistic"/>
 
 </menu>
