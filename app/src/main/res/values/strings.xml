@@ -9,6 +9,9 @@
     <string name="fragment_title_groups">Группы устройств</string>
     <string name="fragment_title_statistic">Статистика</string>
 
+    <string name="device_is_died">Не подключен</string>
+    <string name="default_device_name">Устройство</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

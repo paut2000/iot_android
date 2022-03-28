@@ -8,8 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="dead_device">#995456</color>
-    <color name="enable_device">#659954</color>
-    <color name="disable_device">#67000000</color>
+    <color name="device_background">#191A30</color>
 
 </resources>

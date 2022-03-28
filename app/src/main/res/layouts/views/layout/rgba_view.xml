@@ -5,31 +5,23 @@
         xmlns:tools="http://schemas.android.com/tools"
         tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
         android:background="@color/purple_200"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-    <TextView
-            android:id="@+id/name"
-            android:text="Светодиоды RGB: Название"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <Button
             android:id="@+id/off_button"
             android:text="Off"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" app:layout_constraintBottom_toTopOf="@+id/on_button"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@+id/name"/>
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"/>
 
     <Button
             android:id="@+id/on_button"
             android:text="White"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" app:layout_constraintBottom_toTopOf="@+id/color_picker_button"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/color_picker_button"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@+id/off_button"/>
 
     <Button
             android:id="@+id/color_picker_button"
@@ -45,27 +37,17 @@
             android:layout_height="50dp"
             android:background="@drawable/circle"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name"
-            app:layout_constraintEnd_toStartOf="@+id/on_button"/>
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/progress_bar"/>
 
     <ProgressBar
             android:id="@+id/progress_bar"
             android:visibility="invisible"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-            android:id="@+id/error_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:text="Не подключен" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/name"/>
 
 </merge>

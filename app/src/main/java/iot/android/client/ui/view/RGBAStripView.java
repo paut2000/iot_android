@@ -22,13 +22,11 @@ public class RGBAStripView  extends ConstraintLayout {
 
     private final RGBAStrip strip;
 
-    private final TextView name;
     private final Button colorPickerButton;
     private final Button onButton;
     private final Button offButton;
     private final ImageView colorView;
     private final ProgressBar progressBar;
-    private final TextView errorView;
 
     public RGBAStripView(@NonNull @NotNull Context context, RGBAStrip strip) {
         super(context);
@@ -39,30 +37,16 @@ public class RGBAStripView  extends ConstraintLayout {
         this.strip = strip;
 
         RgbaViewBinding binding = RgbaViewBinding.bind(this);
-        name = binding.name;
         onButton = binding.onButton;
         offButton = binding.offButton;
         colorPickerButton = binding.colorPickerButton;
         colorView = binding.colorView;
         progressBar = binding.progressBar;
-        errorView = binding.errorView;
 
         init(context);
     }
 
     private void init(Context context) {
-        name.setText(strip.getSerialNumber());
-
-        // Заблокировать всё, если девайс мёртв
-        if (!strip.isAlive()) {
-            errorView.setVisibility(VISIBLE);
-            colorPickerButton.setVisibility(INVISIBLE);
-            onButton.setVisibility(INVISIBLE);
-            offButton.setVisibility(INVISIBLE);
-            colorView.setVisibility(INVISIBLE);
-            setColorViewColor(strip.getData());
-            return;
-        }
 
         refreshStatesOfAll();
 

@@ -5,24 +5,14 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import android.widget.GridLayout;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import iot.android.client.App;
 import iot.android.client.R;
 import iot.android.client.databinding.FragmentHomeBinding;
 import iot.android.client.model.House;
-import iot.android.client.model.device.actuator.RGBAStrip;
-import iot.android.client.model.device.actuator.Relay;
-import iot.android.client.model.device.sensor.DHT;
-import iot.android.client.ui.factory.DeviceViewFactory;
-import iot.android.client.ui.view.DHTView;
-import iot.android.client.ui.view.RGBAStripView;
-import iot.android.client.ui.view.RelayView;
+import iot.android.client.ui.view.DeviceView;
 
 import javax.inject.Inject;
 
@@ -31,7 +21,7 @@ public class HomeFragment extends Fragment {
     @Inject
     House house;
 
-    private TableLayout deviceContainer;
+    private GridLayout deviceContainer;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -75,7 +65,7 @@ public class HomeFragment extends Fragment {
     private void refillDeviceContainer() {
         deviceContainer.removeAllViews();
         house.getDevices().forEach((key, device) -> {
-            deviceContainer.addView(DeviceViewFactory.createDeviceView(device, getContext()));
+            deviceContainer.addView(new DeviceView(getContext(), device));
         });
     }
 

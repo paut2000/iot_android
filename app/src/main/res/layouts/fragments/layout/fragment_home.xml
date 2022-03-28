@@ -14,11 +14,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            <TableLayout
+            <GridLayout
                     android:id="@+id/devices_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-            />
+                    android:columnCount="2"
+                    android:orientation="horizontal"
+                    />
 
         </ScrollView>
 
