@@ -15,12 +15,16 @@
             android:id="@+id/groups_page"
             android:name="iot.android.client.ui.fragment.GroupsFragment"
             android:label="@string/fragment_title_groups"
-            tools:layout="@layout/fragment_groups"/>
+            tools:layout="@layout/fragment_groups">
+        <action android:id="@+id/action_groups_page_to_groupActivity" app:destination="@id/groupActivity"/>
+    </fragment>
 
     <fragment
             android:id="@+id/statistic_page"
             android:name="iot.android.client.ui.fragment.StatisticFragment"
             android:label="@string/fragment_title_statistic"
             tools:layout="@layout/fragment_statistic"/>
+    <activity android:id="@+id/groupActivity" android:name="iot.android.client.ui.activity.GroupActivity"
+              android:label="activity_group" tools:layout="@layout/activity_group"/>
 
 </navigation>

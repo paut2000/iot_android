@@ -1,25 +1,21 @@
 package iot.android.client.ui.fragment;
 
 import android.os.Bundle;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import androidx.fragment.app.Fragment;
 import iot.android.client.App;
 import iot.android.client.R;
 import iot.android.client.databinding.FragmentGroupsBinding;
 import iot.android.client.model.House;
-import iot.android.client.model.device.AbstractDevice;
 import iot.android.client.model.group.DeviceGroup;
-import iot.android.client.ui.view.DeviceView;
 import iot.android.client.ui.view.GroupView;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 
 public class GroupsFragment extends Fragment {
 
@@ -27,7 +23,6 @@ public class GroupsFragment extends Fragment {
     House house;
 
     private LinearLayout groupsContainer;
-    private TextView noGroupsView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,7 +31,6 @@ public class GroupsFragment extends Fragment {
 
         FragmentGroupsBinding binding = FragmentGroupsBinding.bind(view);
         groupsContainer = binding.groupsContainer;
-        noGroupsView = binding.noGroupsView;
 
         App.getFragmentComponent().inject(this);
 

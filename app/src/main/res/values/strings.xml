@@ -16,6 +16,9 @@
 
     <string name="no_groups_in_groups_fragment">Вы ещё не добавили группы</string>
 
+    <string name="enable_all_button">Включить</string>
+    <string name="disable_all_button">Выключить</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
