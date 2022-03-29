@@ -6,10 +6,24 @@
              android:layout_height="match_parent"
              tools:context=".ui.fragment.GroupsFragment">
 
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <LinearLayout
+                android:id="@+id/groups_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+
+    </ScrollView>
+
     <TextView
+            android:id="@+id/no_groups_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:visibility="invisible"
             android:text="@string/no_groups_in_groups_fragment"/>
 
 </FrameLayout>
