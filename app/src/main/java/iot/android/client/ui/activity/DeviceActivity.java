@@ -1,6 +1,8 @@
 package iot.android.client.ui.activity;
 
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import iot.android.client.App;
@@ -49,8 +51,28 @@ public class DeviceActivity extends AppCompatActivity {
     }
 
     private void init() {
+        getSupportActionBar().setTitle(device.getName());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         placeForDeviceInfo.addView(new DeviceInfoView(this, device));
-        placeForDevice.addView(DeviceViewFactory.createDeviceView(device, this));
+
+        if (device.isAlive()) {
+            placeForDevice.addView(DeviceViewFactory.createDeviceView(device, this));
+        } else {
+            placeForDevice.setVisibility(View.INVISIBLE);
+        }
+
+
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

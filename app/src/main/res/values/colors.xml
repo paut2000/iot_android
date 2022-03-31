@@ -8,9 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="device_background">#191A30</color>
-    <color name="home_background_gradient_1">#193D47</color>
-    <color name="home_background_gradient_2">#001D25</color>
+    <color name="device_background">#000000</color>
+    <color name="home_background_gradient_1">#2D2D2D</color>
+    <color name="home_background_gradient_2">#52878787</color>
 
     <color name="off_rgba">#FF000000</color>
 
