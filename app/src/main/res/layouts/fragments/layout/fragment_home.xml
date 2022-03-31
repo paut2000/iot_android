@@ -16,12 +16,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            <GridLayout
-                    android:id="@+id/devices_container"
+            <FrameLayout
+                    android:id="@+id/place_for_devices_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:columnCount="2"
-                    android:orientation="horizontal"/>
+                    android:layout_height="match_parent"/>
 
         </ScrollView>
 

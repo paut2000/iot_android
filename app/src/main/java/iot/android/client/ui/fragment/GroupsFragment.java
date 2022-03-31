@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import iot.android.client.App;
 import iot.android.client.R;
+import iot.android.client.dao.GroupDao;
 import iot.android.client.databinding.FragmentGroupsBinding;
 import iot.android.client.model.House;
 import iot.android.client.model.group.DeviceGroup;
@@ -22,7 +25,11 @@ public class GroupsFragment extends Fragment {
     @Inject
     House house;
 
+    @Inject
+    GroupDao groupDao;
+
     private LinearLayout groupsContainer;
+    private Button addGroupButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,6 +38,7 @@ public class GroupsFragment extends Fragment {
 
         FragmentGroupsBinding binding = FragmentGroupsBinding.bind(view);
         groupsContainer = binding.groupsContainer;
+        addGroupButton = binding.addGroupButton;
 
         App.getFragmentComponent().inject(this);
 
@@ -40,37 +48,32 @@ public class GroupsFragment extends Fragment {
     }
 
     public void init() {
-        DeviceGroup group = new DeviceGroup();
-        group.setName("Cool group");
-        try {
-            group.addDevice(house.getDevice("device-1"));
-            group.addDevice(house.getDevice("device-2"));
-            group.addDevice(house.getDevice("device-3"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        DeviceGroup group2 = new DeviceGroup();
-        group2.setName("Fuck group");
-        try {
-            group2.addDevice(house.getDevice("device-2"));
-            group2.addDevice(house.getDevice("device-1"));
-            group2.addDevice(house.getDevice("device-4"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        DeviceGroup group3 = new DeviceGroup();
-        group3.setName("Yeeeeeh group");
-        try {
-            group3.addDevice(house.getDevice("device-1"));
-            group3.addDevice(house.getDevice("device-4"));
-            group3.addDevice(house.getDevice("device-5"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        addGroupButton.setOnClickListener(view -> {
+            createAddGroupDialog().show();
+        });
 
-        groupsContainer.addView(new GroupView(getContext(), group));
-        groupsContainer.addView(new GroupView(getContext(), group2));
-        groupsContainer.addView(new GroupView(getContext(), group3));
+        fillGroupsContainer();
+    }
+
+    private void fillGroupsContainer() {
+        groupsContainer.removeAllViews();
+        groupDao.readAll().forEach(group -> {
+            groupsContainer.addView(new GroupView(getContext(), group));
+        });
+    }
+
+    private AlertDialog createAddGroupDialog() {
+        EditText editText = new EditText(getContext());
+        return new AlertDialog.Builder(getContext())
+                .setTitle("Введите название группы")
+                .setView(editText)
+                .setPositiveButton("Создать", (dialogInterface, i) -> {
+                    DeviceGroup deviceGroup = new DeviceGroup();
+                    deviceGroup.setName(editText.getText().toString());
+                    groupDao.create(deviceGroup);
+                    fillGroupsContainer();
+                })
+                .create();
     }
 
 }

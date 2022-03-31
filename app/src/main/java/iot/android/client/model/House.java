@@ -5,6 +5,7 @@ import iot.android.client.App;
 import iot.android.client.api.iapi.IHouseApi;
 import iot.android.client.callback.AbstractCallbackDefaultOnFailure;
 import iot.android.client.callback.OnSuccessCallback;
+import iot.android.client.dao.DeviceDao;
 import iot.android.client.model.device.AbstractDevice;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,9 @@ public class House {
     @Inject
     IHouseApi houseApi;
 
+    @Inject
+    DeviceDao deviceDao;
+
     public House() {
         App.getHouseComponent().inject(this);
     }
@@ -42,6 +46,7 @@ public class House {
             public void onResponse(Call<House> call, Response<House> response) {
                 if (response.isSuccessful()) {
                     devices = response.body().getDevices();
+                    devices.forEach((s, device) -> deviceDao.synchronizeOrInsert(device));
                     onSuccessCallback.onSuccess();
                 }
             }

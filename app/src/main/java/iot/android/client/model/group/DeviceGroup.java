@@ -5,12 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @Getter
-public class DeviceGroup {
+public class DeviceGroup implements Serializable {
+
+    @Setter
+    private Long id = null;
 
     @Setter
     private String name;

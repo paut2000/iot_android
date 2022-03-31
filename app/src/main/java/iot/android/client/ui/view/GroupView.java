@@ -72,6 +72,7 @@ public class GroupView extends LinearLayout {
         setOnLongClickListener(view -> {
             Activity activity = (Activity) view.getContext();
             Intent intent = new Intent(activity, GroupActivity.class);
+            intent.putExtra("group", group);
 
             activity.startActivity(intent);
             return false;

@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -13,6 +14,7 @@ import iot.android.client.R;
 import iot.android.client.databinding.FragmentHomeBinding;
 import iot.android.client.model.House;
 import iot.android.client.ui.view.DeviceView;
+import iot.android.client.ui.view.DevicesView;
 
 import javax.inject.Inject;
 
@@ -21,7 +23,7 @@ public class HomeFragment extends Fragment {
     @Inject
     House house;
 
-    private GridLayout deviceContainer;
+    private FrameLayout placeForDevicesContainer;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -30,7 +32,7 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         FragmentHomeBinding binding = FragmentHomeBinding.bind(view);
-        deviceContainer = binding.devicesContainer;
+        placeForDevicesContainer = binding.placeForDevicesContainer;
         swipeRefreshLayout = binding.swipeRefresh;
 
         App.getFragmentComponent().inject(this);
@@ -63,10 +65,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void refillDeviceContainer() {
-        deviceContainer.removeAllViews();
-        house.getDevices().forEach((key, device) -> {
-            deviceContainer.addView(new DeviceView(getContext(), device));
-        });
+        placeForDevicesContainer.removeAllViews();
+        placeForDevicesContainer.addView(new DevicesView(getContext(), house.getDevices().values()));
     }
 
 }
