@@ -38,9 +38,14 @@ public class HomeFragment extends Fragment {
         App.getFragmentComponent().inject(this);
 
         createSwipeRefreshLayout();
-        fillDeviceContainer();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fillDeviceContainer();
     }
 
     private void createSwipeRefreshLayout() {

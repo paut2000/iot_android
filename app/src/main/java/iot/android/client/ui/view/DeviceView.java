@@ -1,6 +1,8 @@
 package iot.android.client.ui.view;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Gravity;
@@ -14,6 +16,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import iot.android.client.R;
 import iot.android.client.databinding.DeviceViewBinding;
 import iot.android.client.model.device.AbstractDevice;
+import iot.android.client.ui.activity.DeviceActivity;
+import iot.android.client.ui.activity.GroupActivity;
 import iot.android.client.ui.factory.DeviceViewFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,6 +43,31 @@ public class DeviceView extends ConstraintLayout {
 
         init(context);
 
+        layout(context);
+    }
+
+    private void init(Context context) {
+        name.setText(device.getName());
+
+        setOnLongClickListener(view -> {
+            Activity activity = (Activity) view.getContext();
+            Intent intent = new Intent(activity, DeviceActivity.class);
+            intent.putExtra("serialNumber", device.getSerialNumber());
+
+            activity.startActivity(intent);
+            return false;
+        });
+
+        if(!device.isAlive()) {
+            deviceContainer.setVisibility(INVISIBLE);
+            errorView.setVisibility(VISIBLE);
+            return;
+        }
+
+        deviceContainer.addView(DeviceViewFactory.createDeviceView(device, context));
+    }
+
+    private void layout(Context context) {
         setBackgroundResource(R.drawable.device_background);
 
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -64,18 +93,6 @@ public class DeviceView extends ConstraintLayout {
         setLayoutParams(params);
 
         setPadding(10,10,10,10);
-    }
-
-    private void init(Context context) {
-        name.setText(device.getSerialNumber());
-
-        if(!device.isAlive()) {
-            deviceContainer.setVisibility(INVISIBLE);
-            errorView.setVisibility(VISIBLE);
-            return;
-        }
-
-        deviceContainer.addView(DeviceViewFactory.createDeviceView(device, context));
     }
 
 }

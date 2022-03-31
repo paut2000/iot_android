@@ -11,13 +11,18 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/Theme.AndroidClientForIOT"
+            android:theme="@style/Theme.AppCompat"
             android:usesCleartextTraffic="true">
+        <activity
+                android:name=".ui.activity.DeviceActivity"
+                android:theme="@style/Theme.AppCompat">
+        </activity>
         <activity android:name=".ui.activity.GroupActivity">
         </activity>
         <activity
                 android:name=".ui.MainActivity"
                 android:exported="true"
+                android:theme="@style/Theme.AppCompat">
                 android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -11,10 +11,16 @@ import javax.inject.Singleton;
 @Module
 public class HouseModule {
 
+    private House house;
+
+    public HouseModule(House house) {
+        this.house = house;
+    }
+
     @Provides
     @Singleton
     public House provideHouse() {
-        return new House();
+        return house;
     }
 
 }
