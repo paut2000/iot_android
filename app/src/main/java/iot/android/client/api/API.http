@@ -1,0 +1,38 @@
+# curl -X GET http://192.168.0.3:8080/api/statistic/device-1
+GET http://localhost:8080/api/statistic/device-3
+
+###
+
+# curl -X GET http://192.168.0.3:8080/api/data/device-1
+GET http://localhost:8080/api/data/device-1
+Accept: application/json
+
+###
+POST http://localhost:8080/api/control/rgba/device-2
+Content-Type: application/json
+
+{
+  "red":15,
+  "green":0,
+  "blue":64,
+  "alfa":255
+}
+
+###
+POST http://localhost:8080/api/control/actuator/disable/device-1
+Content-Type: application/json
+
+{}
+
+###
+POST http://localhost:8080/api/control/actuator/enable/device-1
+Content-Type: application/json
+
+{}
+
+###
+GET http://localhost:8080/api/house
+Accept: application/json
+
+###
+

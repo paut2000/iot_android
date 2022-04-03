@@ -4,12 +4,13 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import iot.android.client.App;
-import iot.android.client.R;
 import iot.android.client.databinding.ActivityDeviceBinding;
 import iot.android.client.model.House;
 import iot.android.client.model.device.AbstractDevice;
+import iot.android.client.model.device.data.AbstractData;
 import iot.android.client.ui.factory.DeviceViewFactory;
 import iot.android.client.ui.view.DeviceInfoView;
 
@@ -63,7 +64,13 @@ public class DeviceActivity extends AppCompatActivity {
             placeForDevice.setVisibility(View.INVISIBLE);
         }
 
-
+        device.requestSample(data -> {
+            for (AbstractData elem : data) {
+                TextView textView = new TextView(this);
+                textView.setText(elem.getDatetime().toString());
+                placeForDeviceStatistic.addView(textView);
+            }
+        });
 
     }
 

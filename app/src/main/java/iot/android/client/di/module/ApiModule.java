@@ -7,8 +7,12 @@ import dagger.Provides;
 import iot.android.client.api.iapi.IActuatorApi;
 import iot.android.client.api.iapi.IDataApi;
 import iot.android.client.api.iapi.IHouseApi;
+import iot.android.client.api.message.DeviceDataSampleMessage;
 import iot.android.client.api.parser.AbstractDeviceJsonParser;
+import iot.android.client.api.parser.DeviceDataJsonParser;
+import iot.android.client.api.parser.DeviceDataSampleParser;
 import iot.android.client.model.device.AbstractDevice;
+import iot.android.client.model.device.data.AbstractData;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -29,10 +33,14 @@ public class ApiModule {
                 .addConverterFactory(
                         JacksonConverterFactory.create(
                                 new ObjectMapper().registerModule(
-                                        new SimpleModule().addDeserializer(
-                                                AbstractDevice.class,
-                                                new AbstractDeviceJsonParser()
-                                        )
+                                        new SimpleModule()
+                                                .addDeserializer(
+                                                        AbstractDevice.class,
+                                                        new AbstractDeviceJsonParser()
+                                                ).addDeserializer(
+                                                        DeviceDataSampleMessage.class,
+                                                        new DeviceDataSampleParser()
+                                                )
                                 ).setDateFormat(new SimpleDateFormat(DATE_FORMAT))
                         )
                 ).build();
