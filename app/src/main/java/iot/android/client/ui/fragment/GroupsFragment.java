@@ -15,10 +15,9 @@ import iot.android.client.dao.GroupDao;
 import iot.android.client.databinding.FragmentGroupsBinding;
 import iot.android.client.model.House;
 import iot.android.client.model.group.DeviceGroup;
-import iot.android.client.ui.view.GroupView;
+import iot.android.client.ui.view.group.GroupView;
 
 import javax.inject.Inject;
-import java.io.IOException;
 
 public class GroupsFragment extends Fragment {
 

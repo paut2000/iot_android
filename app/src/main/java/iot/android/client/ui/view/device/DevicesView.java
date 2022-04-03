@@ -1,4 +1,4 @@
-package iot.android.client.ui.view;
+package iot.android.client.ui.view.device;
 
 import android.content.Context;
 import android.view.LayoutInflater;

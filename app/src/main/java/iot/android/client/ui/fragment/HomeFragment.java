@@ -6,15 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.GridLayout;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import iot.android.client.App;
 import iot.android.client.R;
 import iot.android.client.databinding.FragmentHomeBinding;
 import iot.android.client.model.House;
-import iot.android.client.ui.view.DeviceView;
-import iot.android.client.ui.view.DevicesView;
+import iot.android.client.ui.view.device.DevicesView;
 
 import javax.inject.Inject;
 

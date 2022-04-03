@@ -6,9 +6,9 @@ import iot.android.client.model.device.AbstractDevice;
 import iot.android.client.model.device.actuator.RGBAStrip;
 import iot.android.client.model.device.actuator.Relay;
 import iot.android.client.model.device.sensor.DHT;
-import iot.android.client.ui.view.DHTView;
-import iot.android.client.ui.view.RGBAStripView;
-import iot.android.client.ui.view.RelayView;
+import iot.android.client.ui.view.device.dht.DHTView;
+import iot.android.client.ui.view.device.rgba.RGBAStripView;
+import iot.android.client.ui.view.device.relay.RelayView;
 
 public class DeviceViewFactory {
 

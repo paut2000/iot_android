@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import iot.android.client.databinding.ActivityGroupBinding;
 import iot.android.client.model.group.DeviceGroup;
-import iot.android.client.ui.view.DevicesView;
+import iot.android.client.ui.view.device.DevicesView;
 
 public class GroupActivity extends AppCompatActivity {
 

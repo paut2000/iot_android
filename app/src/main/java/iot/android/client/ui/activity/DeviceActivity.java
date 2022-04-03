@@ -12,7 +12,7 @@ import iot.android.client.model.House;
 import iot.android.client.model.device.AbstractDevice;
 import iot.android.client.model.device.data.AbstractData;
 import iot.android.client.ui.factory.DeviceViewFactory;
-import iot.android.client.ui.view.DeviceInfoView;
+import iot.android.client.ui.view.device.DeviceInfoView;
 
 import javax.inject.Inject;
 import java.io.IOException;

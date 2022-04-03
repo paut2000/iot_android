@@ -2,7 +2,7 @@ package iot.android.client.di.component;
 
 import dagger.Component;
 import iot.android.client.di.module.DaoModule;
-import iot.android.client.ui.view.DeviceInfoView;
+import iot.android.client.ui.view.device.DeviceInfoView;
 
 import javax.inject.Singleton;
 
