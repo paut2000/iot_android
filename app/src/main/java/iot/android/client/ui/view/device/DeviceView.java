@@ -16,6 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import iot.android.client.R;
 import iot.android.client.databinding.DeviceViewBinding;
 import iot.android.client.model.device.AbstractDevice;
+import iot.android.client.model.device.sensor.AbstractSensor;
 import iot.android.client.ui.activity.DeviceActivity;
 import iot.android.client.ui.activity.GroupActivity;
 import iot.android.client.ui.factory.DeviceViewFactory;
@@ -58,7 +59,7 @@ public class DeviceView extends ConstraintLayout {
             return false;
         });
 
-        if(!device.isAlive()) {
+        if(!device.isAlive() && !(device instanceof AbstractSensor)) {
             deviceContainer.setVisibility(INVISIBLE);
             errorView.setVisibility(VISIBLE);
             return;

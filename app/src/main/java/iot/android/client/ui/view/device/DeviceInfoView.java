@@ -53,11 +53,11 @@ public class DeviceInfoView extends FrameLayout {
         aliveText.setText(device.isAlive() ? "Подключен" : "Отключен");
 
         changeDeviceNameButton.setOnClickListener(view -> {
-            createAddGroupDialog().show();
+            createChangeNameDialog().show();
         });
     }
 
-    private AlertDialog createAddGroupDialog() {
+    private AlertDialog createChangeNameDialog() {
         EditText editText = new EditText(getContext());
         return new AlertDialog.Builder(getContext())
                 .setTitle("Введите новое имя")

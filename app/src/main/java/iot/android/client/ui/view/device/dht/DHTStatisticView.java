@@ -1,102 +1,106 @@
-package iot.android.client.ui.activity;
+package iot.android.client.ui.view.device.dht;
 
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import com.anychart.AnyChart;
+import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
+import com.anychart.chart.common.listener.Event;
+import com.anychart.chart.common.listener.ListenersInterface;
 import com.anychart.charts.Cartesian;
+import com.anychart.charts.Pie;
 import com.anychart.core.cartesian.series.Line;
 import com.anychart.data.Mapping;
 import com.anychart.data.Set;
-import com.anychart.enums.Anchor;
-import com.anychart.enums.MarkerType;
-import com.anychart.enums.TooltipPositionMode;
+import com.anychart.enums.*;
 import com.anychart.graphics.vector.Stroke;
-import iot.android.client.App;
-import iot.android.client.databinding.ActivityDeviceBinding;
-import iot.android.client.model.House;
-import iot.android.client.model.device.AbstractDevice;
-import iot.android.client.model.device.data.AbstractData;
+import iot.android.client.R;
+import iot.android.client.databinding.DhtStatisticViewBinding;
 import iot.android.client.model.device.data.DHTData;
-import iot.android.client.ui.factory.DeviceViewFactory;
-import iot.android.client.ui.view.device.DeviceInfoView;
-import iot.android.client.ui.view.device.dht.DHTStatisticView;
 
-import javax.inject.Inject;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeviceActivity extends AppCompatActivity {
+public class DHTStatisticView extends ConstraintLayout {
 
-    @Inject
-    public House house;
+    private final List<DHTData> dataList;
 
-    private AbstractDevice device;
+    /*private final AnyChartView humidityAnyChart;
+    private final AnyChartView periodAnyChart;*/
+    private final AnyChartView temperatureAnyChart;
 
-    /*private FrameLayout placeForDeviceInfo;
-    private FrameLayout placeForDevice;
-    private FrameLayout placeForDeviceStatistic;*/
+    private final ProgressBar progressBar;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public DHTStatisticView(Context context, List<DHTData> dataList) {
+        super(context);
 
-        ActivityDeviceBinding binding = ActivityDeviceBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        this.dataList = dataList;
 
-        /*placeForDeviceInfo = binding.placeForDeviceInfo;
-        placeForDevice = binding.placeForDevice;
-        placeForDeviceStatistic = binding.placeForDeviceStatistic;*/
+        LayoutInflater inflater = LayoutInflater.from(context);
+        inflater.inflate(R.layout.dht_statistic_view, this, true);
 
-        App.getActivityComponent().inject(this);
+        DhtStatisticViewBinding binding = DhtStatisticViewBinding.bind(this);
+        /*humidityAnyChart = binding.humidityAnyChart;
+        periodAnyChart = binding.periodPlotAnyChart;*/
+        temperatureAnyChart = binding.temperatureAnyChart;
 
-        String deviceSerialNumber = getIntent().getExtras().getString("serialNumber");
-        try {
-            device = house.getDevice(deviceSerialNumber);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        progressBar = binding.progressBar;
 
-        binding.temperatureAnyChart.setChart(create());
-
-        init();
+        init(context);
     }
 
-    private void init() {
-        /*getSupportActionBar().setTitle(device.getName());
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    private void init(Context context) {
+        /*humidityAnyChart.setProgressBar(progressBar);
+        humidityAnyChart.setChart(createPieChart(context));*/
+        temperatureAnyChart.setProgressBar(progressBar);
+        temperatureAnyChart.setChart(create());
+    }
 
-        placeForDeviceInfo.addView(new DeviceInfoView(this, device));
+    private Pie createPieChart(Context context) {
+        Pie pie = AnyChart.pie();
 
-        if (device.isAlive()) {
-            placeForDevice.addView(DeviceViewFactory.createDeviceView(device, this));
-        } else {
-            placeForDevice.setVisibility(View.INVISIBLE);
-        }
-
-        device.requestSample(message -> {
-            if (message.getType().equals("DHT")) {
-                placeForDeviceStatistic.addView(
-                        new DHTStatisticView(this, (List<DHTData>) (List<?>) message.getDataList())
-                );
+        pie.setOnClickListener(new ListenersInterface.OnClickListener(new String[] {"x", "value"}) {
+            @Override
+            public void onClick(Event event) {
+                Toast.makeText(
+                        context,
+                        event.getData().get("x") + ":" + event.getData().get("value"), Toast.LENGTH_SHORT
+                ).show();
             }
-        });*/
+        });
 
-    }
+        List<DataEntry> data = new ArrayList<>();
+        data.add(new ValueDataEntry("Apples", 6371664));
+        data.add(new ValueDataEntry("Pears", 789622));
+        data.add(new ValueDataEntry("Bananas", 7216301));
+        data.add(new ValueDataEntry("Grapes", 1486621));
+        data.add(new ValueDataEntry("Oranges", 1200000));
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
+        pie.data(data);
+
+        pie.height(100);
+        pie.width(100);
+
+        pie.title("Fruits imported in 2015 (in kg)");
+
+        pie.labels().position("outside");
+
+        pie.legend().title().enabled(true);
+        pie.legend().title()
+                .text("Retail channels")
+                .padding(0d, 0d, 10d, 0d);
+
+        pie.legend()
+                .position("center-bottom")
+                .itemsLayout(LegendLayout.HORIZONTAL)
+                .align(Align.CENTER);
+
+        return pie;
     }
 
     private Cartesian create() {

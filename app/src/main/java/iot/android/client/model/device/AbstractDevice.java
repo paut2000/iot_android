@@ -47,7 +47,7 @@ public abstract class AbstractDevice {
             @Override
             public void onResponse(Call<DeviceDataSampleMessage> call, Response<DeviceDataSampleMessage> response) {
                 if (response.isSuccessful()) {
-                    onGetDataCallback.onGetData(response.body().getDataList());
+                    onGetDataCallback.onGetData(response.body());
                 }
             }
         });
