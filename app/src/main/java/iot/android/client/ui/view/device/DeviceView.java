@@ -50,13 +50,12 @@ public class DeviceView extends ConstraintLayout {
     private void init(Context context) {
         name.setText(device.getName());
 
-        setOnLongClickListener(view -> {
+        setOnClickListener(view -> {
             Activity activity = (Activity) view.getContext();
             Intent intent = new Intent(activity, DeviceActivity.class);
             intent.putExtra("serialNumber", device.getSerialNumber());
 
             activity.startActivity(intent);
-            return false;
         });
 
         if(!device.isAlive() && !(device instanceof AbstractSensor)) {

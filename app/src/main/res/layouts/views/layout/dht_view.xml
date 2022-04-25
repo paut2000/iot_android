@@ -13,7 +13,8 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/temperature"/>
+            android:background="@drawable/temperature"
+            android:backgroundTint="@color/black"/>
 
         <TextView
                 android:text="@string/dht_separator"
@@ -36,7 +37,8 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/humidity"/>
+                android:background="@drawable/humidity"
+                android:backgroundTint="@color/black"/>
 
         <TextView
                 android:text="@string/dht_separator"
@@ -59,7 +61,8 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/time"/>
+                android:background="@drawable/time"
+                android:backgroundTint="@color/black"/>
 
         <TextView
                 android:text="@string/dht_separator"

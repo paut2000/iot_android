@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import iot.android.client.App;
 import iot.android.client.R;
@@ -28,10 +29,13 @@ public class DeviceInfoView extends FrameLayout {
     private TextView aliveText;
     private Button changeDeviceNameButton;
 
-    public DeviceInfoView(@NonNull Context context, AbstractDevice device) {
+    private ActionBar actionBar;
+
+    public DeviceInfoView(@NonNull Context context, AbstractDevice device, ActionBar actionBar) {
         super(context);
 
         this.device = device;
+        this.actionBar = actionBar;
 
         App.getViewComponent().inject(this);
 
@@ -66,6 +70,7 @@ public class DeviceInfoView extends FrameLayout {
                     String newName = editText.getText().toString();
                     device.setName(newName);
                     deviceDao.update(device);
+                    actionBar.setTitle(newName);
                 })
                 .create();
     }

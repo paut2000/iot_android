@@ -23,6 +23,7 @@ import iot.android.client.model.House;
 import iot.android.client.model.device.AbstractDevice;
 import iot.android.client.model.device.data.AbstractData;
 import iot.android.client.model.device.data.DHTData;
+import iot.android.client.model.device.sensor.AbstractSensor;
 import iot.android.client.ui.factory.DeviceViewFactory;
 import iot.android.client.ui.view.device.DeviceInfoView;
 import iot.android.client.ui.view.device.dht.DHTStatisticView;
@@ -39,9 +40,9 @@ public class DeviceActivity extends AppCompatActivity {
 
     private AbstractDevice device;
 
-    /*private FrameLayout placeForDeviceInfo;
+    private FrameLayout placeForDeviceInfo;
     private FrameLayout placeForDevice;
-    private FrameLayout placeForDeviceStatistic;*/
+    private FrameLayout placeForDeviceStatistic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +51,9 @@ public class DeviceActivity extends AppCompatActivity {
         ActivityDeviceBinding binding = ActivityDeviceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        /*placeForDeviceInfo = binding.placeForDeviceInfo;
+        placeForDeviceInfo = binding.placeForDeviceInfo;
         placeForDevice = binding.placeForDevice;
-        placeForDeviceStatistic = binding.placeForDeviceStatistic;*/
+        placeForDeviceStatistic = binding.placeForDeviceStatistic;
 
         App.getActivityComponent().inject(this);
 
@@ -69,13 +70,13 @@ public class DeviceActivity extends AppCompatActivity {
     }
 
     private void init() {
-        /*getSupportActionBar().setTitle(device.getName());
+        getSupportActionBar().setTitle(device.getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        placeForDeviceInfo.addView(new DeviceInfoView(this, device));
+        placeForDeviceInfo.addView(new DeviceInfoView(this, device, getSupportActionBar()));
 
-        if (device.isAlive()) {
+        if (device.isAlive() || device instanceof AbstractSensor) {
             placeForDevice.addView(DeviceViewFactory.createDeviceView(device, this));
         } else {
             placeForDevice.setVisibility(View.INVISIBLE);
@@ -87,7 +88,7 @@ public class DeviceActivity extends AppCompatActivity {
                         new DHTStatisticView(this, (List<DHTData>) (List<?>) message.getDataList())
                 );
             }
-        });*/
+        });
 
     }
 

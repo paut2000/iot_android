@@ -38,9 +38,8 @@ public class DHTView extends TableLayout {
     }
 
     private void init() {
-
-        temperature.setText(dht.getData().getTemperature().toString());
-        humidity.setText(dht.getData().getHumidity().toString());
+        temperature.setText(String.format("%.2f", dht.getData().getTemperature()));
+        humidity.setText(String.format("%.2f", dht.getData().getHumidity()));
         datetime.setText(new SimpleDateFormat("hh:mm").format(dht.getData().getDatetime().getTime()));
 
     }
