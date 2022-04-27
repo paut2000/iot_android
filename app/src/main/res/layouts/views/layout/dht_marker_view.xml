@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chart_marker_background" >
+
+        <TextView
+                android:id="@+id/datetime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/temperature_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/datetime"
+                android:text="Температура"/>
+
+        <Space
+                android:id="@+id/temperature_label_space"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/datetime"
+                android:layout_toEndOf="@id/temperature_label"/>
+
+        <TextView
+                android:id="@+id/temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/datetime"
+                android:layout_toEndOf="@id/temperature_label_space"/>
+
+        <TextView
+                android:id="@+id/humidity_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/temperature_label"
+                android:text="Влажность"/>
+
+        <TextView
+                android:id="@+id/humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/temperature"
+                android:layout_toEndOf="@id/temperature_label_space"/>
+    
+</RelativeLayout>

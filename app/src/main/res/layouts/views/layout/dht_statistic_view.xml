@@ -6,24 +6,43 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <com.anychart.AnyChartView
-            android:id="@+id/temperature_any_chart"
+    <LinearLayout
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:orientation="vertical">
 
-    <!--<com.anychart.AnyChartView
-            android:id="@+id/humidity_any_chart"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Данные за день"/>
 
-    <com.anychart.AnyChartView
-            android:id="@+id/period_plot_any_chart"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>-->
+        <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/day_temperature_chart"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"/>
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/day_humidity_chart"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"/>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Данные за месяц"/>
+
+        <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/month_temperature_chart"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"/>
+
+        <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/month_humidity_chart"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"/>
+
+    </LinearLayout>
 
 </merge>

@@ -53,4 +53,16 @@ public class House {
         });
     }
 
+    public void deleteDevice(AbstractDevice device, OnSuccessCallback onSuccessCallback) {
+        houseApi.removeDevice(device.getSerialNumber()).enqueue(new AbstractCallbackDefaultOnFailure<House>() {
+            @Override
+            public void onResponse(Call<House> call, Response<House> response) {
+                if (response.isSuccessful()) {
+                    devices.remove(device.getSerialNumber());
+                    onSuccessCallback.onSuccess();
+                }
+            }
+        });
+    }
+
 }

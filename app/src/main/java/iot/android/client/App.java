@@ -42,9 +42,6 @@ public class App extends Application {
                 .apiModule(apiModule)
                 .daoModule(daoModule)
                 .build();
-        viewComponent = DaggerViewComponent.builder()
-                .daoModule(daoModule)
-                .build();
 
         // Посылаю House через конструктор потому что даггер по непонятным мне причинам внедряет разные
         // экземпляры, хотя должен быть синглтон (во фрагменты и дао внедряется один и тот же экзмемпляр,
@@ -59,6 +56,10 @@ public class App extends Application {
                 .build();
         activityComponent = DaggerActivityComponent.builder()
                 .houseModule(houseModule)
+                .build();
+        viewComponent = DaggerViewComponent.builder()
+                .houseModule(houseModule)
+                .daoModule(daoModule)
                 .build();
     }
 

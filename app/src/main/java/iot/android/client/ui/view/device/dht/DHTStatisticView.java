@@ -1,40 +1,37 @@
 package iot.android.client.ui.view.device.dht;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import com.anychart.AnyChart;
-import com.anychart.AnyChartView;
-import com.anychart.chart.common.dataentry.DataEntry;
-import com.anychart.chart.common.dataentry.ValueDataEntry;
-import com.anychart.chart.common.listener.Event;
-import com.anychart.chart.common.listener.ListenersInterface;
-import com.anychart.charts.Cartesian;
-import com.anychart.charts.Pie;
-import com.anychart.core.cartesian.series.Line;
-import com.anychart.data.Mapping;
-import com.anychart.data.Set;
-import com.anychart.enums.*;
-import com.anychart.graphics.vector.Stroke;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import iot.android.client.R;
 import iot.android.client.databinding.DhtStatisticViewBinding;
 import iot.android.client.model.device.data.DHTData;
+import iot.android.client.ui.chart.axis.DateAxisFormatter;
+import iot.android.client.ui.chart.marker.DHTMarker;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class DHTStatisticView extends ConstraintLayout {
 
     private final List<DHTData> dataList;
 
-    /*private final AnyChartView humidityAnyChart;
-    private final AnyChartView periodAnyChart;*/
-    private final AnyChartView temperatureAnyChart;
-
-    private final ProgressBar progressBar;
+    private final LineChart dayTemperatureChart;
+    private final LineChart dayHumidityChart;
+    private final LineChart monthTemperatureChart;
+    private final LineChart monthHumidityChart;
 
     public DHTStatisticView(Context context, List<DHTData> dataList) {
         super(context);
@@ -45,167 +42,274 @@ public class DHTStatisticView extends ConstraintLayout {
         inflater.inflate(R.layout.dht_statistic_view, this, true);
 
         DhtStatisticViewBinding binding = DhtStatisticViewBinding.bind(this);
-        /*humidityAnyChart = binding.humidityAnyChart;
-        periodAnyChart = binding.periodPlotAnyChart;*/
-        temperatureAnyChart = binding.temperatureAnyChart;
 
-        progressBar = binding.progressBar;
+        dayTemperatureChart = binding.dayTemperatureChart;
+        dayHumidityChart = binding.dayHumidityChart;
+        monthTemperatureChart = binding.monthTemperatureChart;
+        monthHumidityChart = binding.monthHumidityChart;
 
         init(context);
     }
 
     private void init(Context context) {
-        /*humidityAnyChart.setProgressBar(progressBar);
-        humidityAnyChart.setChart(createPieChart(context));*/
-        temperatureAnyChart.setProgressBar(progressBar);
-        temperatureAnyChart.setChart(create());
+        createChartsForDay(context);
+        createChartsForMonth(context);
     }
 
-    private Pie createPieChart(Context context) {
-        Pie pie = AnyChart.pie();
+    private void createChartsForMonth(Context context) {
+        ArrayList<Entry> maxTemperatureEntries = new ArrayList<>();
+        ArrayList<Entry> minTemperatureEntries = new ArrayList<>();
+        ArrayList<Entry> maxHumidityEntries = new ArrayList<>();
+        ArrayList<Entry> minHumidityEntries = new ArrayList<>();
+        
+        Date startDay = Date.from(
+                LocalDateTime.now()
+                        .truncatedTo(ChronoUnit.DAYS)
+                        .minusMonths(1)
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()
+        );
+        Date endDay = Date.from(
+                LocalDateTime.now()
+                        .truncatedTo(ChronoUnit.DAYS)
+                        .minusMonths(1)
+                        .plusDays(1)
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()
+        );
+        Date terminalDate = Date.from(
+                LocalDateTime.now()
+                        .truncatedTo(ChronoUnit.DAYS)
+                        .plusDays(1)
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()
+        );
 
-        pie.setOnClickListener(new ListenersInterface.OnClickListener(new String[] {"x", "value"}) {
-            @Override
-            public void onClick(Event event) {
-                Toast.makeText(
-                        context,
-                        event.getData().get("x") + ":" + event.getData().get("value"), Toast.LENGTH_SHORT
-                ).show();
+        while (!startDay.equals(terminalDate)) {
+            Date finalStartDay = startDay;
+            Date finalEndDay = endDay;
+
+            Supplier<Stream<DHTData>> requiredDataPeriodStream = () -> dataList.stream()
+                    .filter(
+                            dhtData -> dhtData.getDatetime().after(finalStartDay) &&
+                                            dhtData.getDatetime().before(finalEndDay)
+                    );
+            DHTData maxTemperature = requiredDataPeriodStream.get()
+                    .max(Comparator.comparing(DHTData::getTemperature))
+                    .orElse(null);
+            DHTData minTemperature = requiredDataPeriodStream.get()
+                    .min(Comparator.comparing(DHTData::getTemperature))
+                    .orElse(null);
+            DHTData maxHumidity = requiredDataPeriodStream.get()
+                    .max(Comparator.comparing(DHTData::getHumidity))
+                    .orElse(null);
+            DHTData minHumidity = requiredDataPeriodStream.get()
+                    .min(Comparator.comparing(DHTData::getHumidity))
+                    .orElse(null);
+
+            if (maxTemperature != null) {
+                maxTemperature.setDatetime(Date.from(
+                        maxTemperature.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
+                ));
+                maxTemperatureEntries.add(new Entry(
+                        maxTemperature.getDatetime().getTime(),
+                        maxTemperature.getTemperature().floatValue(),
+                        maxTemperature
+                ));
+            }
+
+            if (minTemperature != null) {
+                minTemperature.setDatetime(Date.from(
+                        minTemperature.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
+                ));
+                minTemperatureEntries.add(new Entry(
+                        minTemperature.getDatetime().getTime(),
+                        minTemperature.getTemperature().floatValue(),
+                        minTemperature
+                ));
+            }
+            if (maxHumidity != null) {
+                maxHumidity.setDatetime(Date.from(
+                        maxHumidity.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
+                ));
+                maxHumidityEntries.add(new Entry(
+                        maxHumidity.getDatetime().getTime(),
+                        maxHumidity.getHumidity().floatValue(),
+                        maxHumidity
+                ));
+            }
+            if (minHumidity != null) {
+                minHumidity.setDatetime(Date.from(
+                        minHumidity.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
+                ));
+                minHumidityEntries.add(new Entry(
+                        minHumidity.getDatetime().getTime(),
+                        minHumidity.getHumidity().floatValue(),
+                        minHumidity
+                ));
+            }
+
+            startDay = Date.from(
+                    startDay.toInstant().plus(1, ChronoUnit.DAYS)
+            );
+            endDay = Date.from(
+                    startDay.toInstant().plus(1, ChronoUnit.DAYS)
+            );
+        }
+
+        LineDataSet maxTemperatureDataSet = createChartDataSet(
+                maxTemperatureEntries,
+                "Максимальная температура",
+                Color.rgb(227, 127, 127),
+                Color.rgb(222, 162, 162)
+        );
+        LineDataSet minTemperatureDataSet = createChartDataSet(
+                minTemperatureEntries,
+                "Минимальная температура",
+                Color.rgb(101,203,225),
+                Color.rgb(180,230,235)
+        );
+
+        List<ILineDataSet> temperatureDataSets = new ArrayList<>();
+        temperatureDataSets.add(maxTemperatureDataSet);
+        temperatureDataSets.add(minTemperatureDataSet);
+
+        LineData temperatureLineData = new LineData(temperatureDataSets);
+        temperatureLineData.setDrawValues(false);
+        monthTemperatureChart.setData(temperatureLineData);
+
+        LineDataSet maxHumidityDataSet = createChartDataSet(
+                maxHumidityEntries,
+                "Максимальная влажность",
+                Color.rgb(227, 127, 127),
+                Color.rgb(222, 162, 162)
+        );
+        LineDataSet minHumidityDataSet = createChartDataSet(
+                minHumidityEntries,
+                "Минимальная влажность",
+                Color.rgb(101,203,225),
+                Color.rgb(180,230,235)
+        );
+
+        List<ILineDataSet> humidityDataSets = new ArrayList<>();
+        humidityDataSets.add(maxHumidityDataSet);
+        humidityDataSets.add(minHumidityDataSet);
+
+        LineData humidityLineData = new LineData(humidityDataSets);
+        humidityLineData.setDrawValues(false);
+        monthHumidityChart.setData(humidityLineData);
+
+        setChartLayout(monthTemperatureChart, "dd", "dd MMMM",
+                true, context);
+        setChartLayout(monthHumidityChart, "dd", "dd MMMM",
+                true,context);
+    }
+
+    private void createChartsForDay(Context context) {
+        setChartLayout(dayTemperatureChart, "HH:mm", "HH:mm dd MMMM",
+                false,context);
+        setChartLayout(dayHumidityChart, "HH:mm", "HH:mm dd MMMM",
+                false,context);
+
+        ArrayList<Entry> temperatureEntries = new ArrayList<>();
+        ArrayList<Entry> humidityEntries = new ArrayList<>();
+        Date oneDayBefore = Date.from(
+                LocalDateTime.now().minusDays(1).atZone(ZoneId.systemDefault()).toInstant()
+        );
+        dataList.forEach(dhtData -> {
+            if (dhtData.getDatetime().after(oneDayBefore)) {
+                temperatureEntries.add(new Entry(
+                        dhtData.getDatetime().getTime(),
+                        dhtData.getTemperature().floatValue(),
+                        dhtData
+                ));
+                humidityEntries.add(new Entry(
+                        dhtData.getDatetime().getTime(),
+                        dhtData.getHumidity().floatValue(),
+                        dhtData
+                ));
             }
         });
 
-        List<DataEntry> data = new ArrayList<>();
-        data.add(new ValueDataEntry("Apples", 6371664));
-        data.add(new ValueDataEntry("Pears", 789622));
-        data.add(new ValueDataEntry("Bananas", 7216301));
-        data.add(new ValueDataEntry("Grapes", 1486621));
-        data.add(new ValueDataEntry("Oranges", 1200000));
-
-        pie.data(data);
-
-        pie.height(100);
-        pie.width(100);
-
-        pie.title("Fruits imported in 2015 (in kg)");
-
-        pie.labels().position("outside");
-
-        pie.legend().title().enabled(true);
-        pie.legend().title()
-                .text("Retail channels")
-                .padding(0d, 0d, 10d, 0d);
-
-        pie.legend()
-                .position("center-bottom")
-                .itemsLayout(LegendLayout.HORIZONTAL)
-                .align(Align.CENTER);
-
-        return pie;
+        LineData temperatureLineData = new LineData(createChartDataSet(
+                temperatureEntries,
+                "Температура",
+                Color.rgb(227, 127, 127),
+                Color.rgb(222, 162, 162)));
+        temperatureLineData.setDrawValues(false);
+        dayTemperatureChart.setData(temperatureLineData);
+        LineData humidityLineData = new LineData(createChartDataSet(
+                humidityEntries,
+                "Влажность",
+                Color.rgb(101,203,225),
+                Color.rgb(180,230,235)));
+        humidityLineData.setDrawValues(false);
+        dayHumidityChart.setData(humidityLineData);
     }
 
-    private Cartesian create() {
-        Cartesian cartesian = AnyChart.line();
+    private LineDataSet createChartDataSet(ArrayList<Entry> entries, String label, int lineColor, int fillColor) {
+        LineDataSet lineDataSet = new LineDataSet(entries, label);
 
-        cartesian.animation(true);
+        lineDataSet.setCubicIntensity(0.2f);
+        lineDataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+        lineDataSet.setDrawFilled(true);
+        lineDataSet.setLineWidth(2f);
+        lineDataSet.setDrawCircles(false);
+        lineDataSet.setColor(lineColor);
+        lineDataSet.setFillColor(fillColor);
+        lineDataSet.setFillAlpha(100);
+        lineDataSet.setDrawHorizontalHighlightIndicator(false);
 
-        cartesian.padding(10d, 20d, 5d, 20d);
-
-        cartesian.crosshair().enabled(true);
-        cartesian.crosshair()
-                .yLabel(true)
-                // TODO ystroke
-                .yStroke((Stroke) null, null, null, (String) null, (String) null);
-
-        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
-
-        cartesian.title("Trend of Sales of the Most Popular Products of ACME Corp.");
-
-        cartesian.yAxis(0).title("Number of Bottles Sold (thousands)");
-        cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
-
-        List<DataEntry> seriesData = new ArrayList<>();
-        seriesData.add(new CustomDataEntry("1986", 3.6, 2.3, 2.8));
-        seriesData.add(new CustomDataEntry("1987", 7.1, 4.0, 4.1));
-        seriesData.add(new CustomDataEntry("1988", 8.5, 6.2, 5.1));
-        seriesData.add(new CustomDataEntry("1989", 9.2, 11.8, 6.5));
-        seriesData.add(new CustomDataEntry("1990", 10.1, 13.0, 12.5));
-        seriesData.add(new CustomDataEntry("1991", 11.6, 13.9, 18.0));
-        seriesData.add(new CustomDataEntry("1992", 16.4, 18.0, 21.0));
-        seriesData.add(new CustomDataEntry("1993", 18.0, 23.3, 20.3));
-        seriesData.add(new CustomDataEntry("1994", 13.2, 24.7, 19.2));
-        seriesData.add(new CustomDataEntry("1995", 12.0, 18.0, 14.4));
-        seriesData.add(new CustomDataEntry("1996", 3.2, 15.1, 9.2));
-        seriesData.add(new CustomDataEntry("1997", 4.1, 11.3, 5.9));
-        seriesData.add(new CustomDataEntry("1998", 6.3, 14.2, 5.2));
-        seriesData.add(new CustomDataEntry("1999", 9.4, 13.7, 4.7));
-        seriesData.add(new CustomDataEntry("2000", 11.5, 9.9, 4.2));
-        seriesData.add(new CustomDataEntry("2001", 13.5, 12.1, 1.2));
-        seriesData.add(new CustomDataEntry("2002", 14.8, 13.5, 5.4));
-        seriesData.add(new CustomDataEntry("2003", 16.6, 15.1, 6.3));
-        seriesData.add(new CustomDataEntry("2004", 18.1, 17.9, 8.9));
-        seriesData.add(new CustomDataEntry("2005", 17.0, 18.9, 10.1));
-        seriesData.add(new CustomDataEntry("2006", 16.6, 20.3, 11.5));
-        seriesData.add(new CustomDataEntry("2007", 14.1, 20.7, 12.2));
-        seriesData.add(new CustomDataEntry("2008", 15.7, 21.6, 10));
-        seriesData.add(new CustomDataEntry("2009", 12.0, 22.5, 8.9));
-
-        Set set = Set.instantiate();
-        set.data(seriesData);
-        Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }");
-        Mapping series2Mapping = set.mapAs("{ x: 'x', value: 'value2' }");
-        Mapping series3Mapping = set.mapAs("{ x: 'x', value: 'value3' }");
-
-        Line series1 = cartesian.line(series1Mapping);
-        series1.name("Brandy");
-        series1.hovered().markers().enabled(true);
-        series1.hovered().markers()
-                .type(MarkerType.CIRCLE)
-                .size(4d);
-        series1.tooltip()
-                .position("right")
-                .anchor(Anchor.LEFT_CENTER)
-                .offsetX(5d)
-                .offsetY(5d);
-
-        Line series2 = cartesian.line(series2Mapping);
-        series2.name("Whiskey");
-        series2.hovered().markers().enabled(true);
-        series2.hovered().markers()
-                .type(MarkerType.CIRCLE)
-                .size(4d);
-        series2.tooltip()
-                .position("right")
-                .anchor(Anchor.LEFT_CENTER)
-                .offsetX(5d)
-                .offsetY(5d);
-
-        Line series3 = cartesian.line(series3Mapping);
-        series3.name("Tequila");
-        series3.hovered().markers().enabled(true);
-        series3.hovered().markers()
-                .type(MarkerType.CIRCLE)
-                .size(4d);
-        series3.tooltip()
-                .position("right")
-                .anchor(Anchor.LEFT_CENTER)
-                .offsetX(5d)
-                .offsetY(5d);
-
-        cartesian.legend().enabled(true);
-        cartesian.legend().fontSize(13d);
-        cartesian.legend().padding(0d, 0d, 10d, 0d);
-
-        return cartesian;
+        return lineDataSet;
     }
 
-    private class CustomDataEntry extends ValueDataEntry {
+    private void setChartLayout(
+            LineChart chart,
+            String axisDateFormat,
+            String markerDateFormat,
+            boolean isXLabelCountDefault,
+            Context context) {
+        chart.setViewPortOffsets(100, 100, 100, 100);
+        chart.getDescription().setEnabled(false);
 
-        CustomDataEntry(String x, Number value, Number value2, Number value3) {
-            super(x, value);
-            setValue("value2", value2);
-            setValue("value3", value3);
-        }
+        // enable touch gestures
+        chart.setTouchEnabled(true);
 
+        // enable scaling and dragging
+        chart.setDragEnabled(true);
+        chart.setScaleEnabled(true);
+        chart.setPinchZoom(false);
+
+        chart.setDrawGridBackground(false);
+        chart.setMaxHighlightDistance(300);
+
+        XAxis x = chart.getXAxis();
+        x.setEnabled(true);
+        if (!isXLabelCountDefault) x.setLabelCount(6, true);
+        x.setTextColor(Color.BLACK);
+        x.setPosition(XAxis.XAxisPosition.BOTTOM);
+        x.setDrawGridLines(false);
+        x.setAxisLineColor(Color.BLACK);
+
+        YAxis y = chart.getAxisLeft();
+        y.setLabelCount(6, true);
+        y.setTextColor(Color.BLACK);
+        y.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        y.setDrawGridLines(true);
+        y.setAxisLineColor(Color.BLACK);
+
+        chart.getAxisRight().setEnabled(false);
+
+        chart.getXAxis().setValueFormatter(new DateAxisFormatter(axisDateFormat));
+
+        chart.animateXY(0, 0);
+
+        DHTMarker dhtMarker = new DHTMarker(context, markerDateFormat);
+        dhtMarker.setChartView(chart);
+        chart.setMarker(dhtMarker);
+
+        // don't forget to refresh the drawing
+        chart.invalidate();
     }
 
 }

@@ -16,4 +16,6 @@
 
     <color name="off_rgba">#FF000000</color>
 
+    <color name="chart_marker_background">#CDC5C5C5</color>
+
 </resources>

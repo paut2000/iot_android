@@ -1,6 +1,8 @@
 package iot.android.client.ui.view.device;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,7 +15,9 @@ import iot.android.client.App;
 import iot.android.client.R;
 import iot.android.client.dao.DeviceDao;
 import iot.android.client.databinding.DeviceInfoViewBinding;
+import iot.android.client.model.House;
 import iot.android.client.model.device.AbstractDevice;
+import iot.android.client.ui.activity.DeviceActivity;
 
 import javax.inject.Inject;
 
@@ -24,10 +28,14 @@ public class DeviceInfoView extends FrameLayout {
     @Inject
     DeviceDao deviceDao;
 
+    @Inject
+    House house;
+
     private TextView serialNumberText;
     private TextView typeText;
     private TextView aliveText;
     private Button changeDeviceNameButton;
+    private Button deleteDeviceButton;
 
     private ActionBar actionBar;
 
@@ -47,17 +55,22 @@ public class DeviceInfoView extends FrameLayout {
         typeText = binding.typeText;
         aliveText = binding.aliveText;
         changeDeviceNameButton = binding.changeNameButton;
+        deleteDeviceButton = binding.deleteDeviceButton;
 
-        init();
+        init(context);
     }
 
-    private void init() {
+    private void init(Context context) {
         serialNumberText.setText(device.getSerialNumber());
         typeText.setText(device.getType());
         aliveText.setText(device.isAlive() ? "Подключен" : "Отключен");
 
         changeDeviceNameButton.setOnClickListener(view -> {
             createChangeNameDialog().show();
+        });
+
+        deleteDeviceButton.setOnClickListener(view -> {
+            createDeleteDeviceDialog(context).show();
         });
     }
 
@@ -71,6 +84,18 @@ public class DeviceInfoView extends FrameLayout {
                     device.setName(newName);
                     deviceDao.update(device);
                     actionBar.setTitle(newName);
+                })
+                .create();
+    }
+
+    private AlertDialog createDeleteDeviceDialog(Context context) {
+        return new AlertDialog.Builder(context)
+                .setTitle("Вы действительно хотите удалить данное устройство?")
+                .setNegativeButton("Нет", (dialogInterface, i) -> {})
+                .setPositiveButton("Да", (dialogInterface, i) -> {
+                    house.deleteDevice(device, () -> {
+
+                    });
                 })
                 .create();
     }

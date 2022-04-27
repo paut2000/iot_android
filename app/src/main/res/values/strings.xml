@@ -20,4 +20,7 @@
     <string name="enable_all_button">Включить</string>
     <string name="disable_all_button">Выключить</string>
 
+    <string name="temperature_chart">Температура</string>
+    <string name="humidity_chart">Влажность</string>
+
 </resources>

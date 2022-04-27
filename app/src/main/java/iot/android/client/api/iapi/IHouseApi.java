@@ -9,4 +9,7 @@ public interface IHouseApi {
     @GET("/api/house")
     Call<House> getHouse();
 
+    @DELETE("/api/house/{serialNumber}")
+    Call<House> removeDevice(@Path("serialNumber") String serialNumber);
+
 }
