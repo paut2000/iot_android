@@ -2,16 +2,10 @@ package iot.android.client.ui.view.device.dht;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import iot.android.client.R;
 import iot.android.client.databinding.DhtStatisticViewBinding;
 import iot.android.client.model.device.data.DHTData;
@@ -22,16 +16,14 @@ import iot.android.client.ui.chart.axis.DateAxisFormatter;
 import iot.android.client.ui.chart.marker.DHTMarker;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class DHTStatisticView extends ConstraintLayout {
 

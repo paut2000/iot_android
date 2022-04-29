@@ -13,6 +13,7 @@ import iot.android.client.model.device.data.DHTData;
 import iot.android.client.model.device.sensor.AbstractSensor;
 import iot.android.client.model.device.sensor.DHT;
 import iot.android.client.ui.factory.DeviceViewFactory;
+import iot.android.client.ui.factory.StatisticViewFactory;
 import iot.android.client.ui.view.device.DeviceInfoView;
 import iot.android.client.ui.view.device.dht.DHTStatisticView;
 
@@ -68,7 +69,7 @@ public class DeviceActivity extends AppCompatActivity {
         }
 
         placeForDeviceStatistic.addView(
-                new DHTStatisticView(this, (DHT) device)
+                StatisticViewFactory.createStatisticView(device, this)
         );
 
     }
