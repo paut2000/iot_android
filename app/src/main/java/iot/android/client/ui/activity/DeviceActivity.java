@@ -11,6 +11,7 @@ import iot.android.client.model.House;
 import iot.android.client.model.device.AbstractDevice;
 import iot.android.client.model.device.data.DHTData;
 import iot.android.client.model.device.sensor.AbstractSensor;
+import iot.android.client.model.device.sensor.DHT;
 import iot.android.client.ui.factory.DeviceViewFactory;
 import iot.android.client.ui.view.device.DeviceInfoView;
 import iot.android.client.ui.view.device.dht.DHTStatisticView;
@@ -66,13 +67,9 @@ public class DeviceActivity extends AppCompatActivity {
             placeForDevice.setVisibility(View.INVISIBLE);
         }
 
-        device.requestSample(message -> {
-            if (message.getType().equals("DHT")) {
-                placeForDeviceStatistic.addView(
-                        new DHTStatisticView(this, (List<DHTData>) (List<?>) message.getDataList())
-                );
-            }
-        });
+        placeForDeviceStatistic.addView(
+                new DHTStatisticView(this, (DHT) device)
+        );
 
     }
 

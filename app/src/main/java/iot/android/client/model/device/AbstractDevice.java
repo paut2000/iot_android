@@ -17,6 +17,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import javax.inject.Inject;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 @Getter
@@ -44,6 +45,18 @@ public abstract class AbstractDevice {
     @JsonIgnore
     public void requestSample(OnGetDataCallback onGetDataCallback) {
         dataApi.getSample(serialNumber).enqueue(new AbstractCallbackDefaultOnFailure<DeviceDataSampleMessage>() {
+            @Override
+            public void onResponse(Call<DeviceDataSampleMessage> call, Response<DeviceDataSampleMessage> response) {
+                if (response.isSuccessful()) {
+                    onGetDataCallback.onGetData(response.body());
+                }
+            }
+        });
+    }
+
+    @JsonIgnore
+    public void requestSampleForPeriod(Timestamp start, Timestamp end, OnGetDataCallback onGetDataCallback) {
+        dataApi.getSampleForPeriod(serialNumber, start, end).enqueue(new AbstractCallbackDefaultOnFailure<DeviceDataSampleMessage>() {
             @Override
             public void onResponse(Call<DeviceDataSampleMessage> call, Response<DeviceDataSampleMessage> response) {
                 if (response.isSuccessful()) {

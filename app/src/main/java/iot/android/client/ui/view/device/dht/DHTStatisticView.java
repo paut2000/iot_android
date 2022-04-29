@@ -2,6 +2,7 @@ package iot.android.client.ui.view.device.dht;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.mikephil.charting.charts.LineChart;
@@ -14,29 +15,37 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import iot.android.client.R;
 import iot.android.client.databinding.DhtStatisticViewBinding;
 import iot.android.client.model.device.data.DHTData;
+import iot.android.client.model.device.sensor.DHT;
+import iot.android.client.ui.chart.LineChartCustomizer;
+import iot.android.client.ui.chart.LineChartDataBuilder;
 import iot.android.client.ui.chart.axis.DateAxisFormatter;
 import iot.android.client.ui.chart.marker.DHTMarker;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DHTStatisticView extends ConstraintLayout {
 
-    private final List<DHTData> dataList;
+    private final DHT dht;
 
     private final LineChart dayTemperatureChart;
     private final LineChart dayHumidityChart;
     private final LineChart monthTemperatureChart;
     private final LineChart monthHumidityChart;
 
-    public DHTStatisticView(Context context, List<DHTData> dataList) {
+    public DHTStatisticView(Context context, DHT dht) {
         super(context);
 
-        this.dataList = dataList;
+        this.dht = dht;
 
         LayoutInflater inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.dht_statistic_view, this, true);
@@ -52,264 +61,170 @@ public class DHTStatisticView extends ConstraintLayout {
     }
 
     private void init(Context context) {
-        createChartsForDay(context);
-        createChartsForMonth(context);
+        customizeDayChart(context, dayTemperatureChart);
+        customizeDayChart(context, dayHumidityChart);
+        customizeMonthChart(context, monthTemperatureChart);
+        customizeMonthChart(context, monthHumidityChart);
+
+        Date nowDate = new Date();
+        Timestamp now = new Timestamp(nowDate.getTime());
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(nowDate);
+        calendar.add(Calendar.DATE, -30);
+
+        Timestamp monthAgo = new Timestamp(calendar.getTime().getTime());
+
+        dht.requestSampleForPeriod(monthAgo, now, message -> {
+            ArrayList<DHTData> dhtData = (ArrayList<DHTData>) (ArrayList<?>) message.getDataList();
+            dayTemperatureChart.setData(
+                    new LineChartDataBuilder()
+                            .addLine(
+                                    createEntryListForDay(dhtData, DHTData::getTemperature),
+                                    "Температура",
+                                    Color.rgb(227, 127, 127),
+                                    Color.rgb(222, 162, 162)
+                            ).create()
+            );
+            dayHumidityChart.setData(
+                    new LineChartDataBuilder()
+                            .addLine(
+                                    createEntryListForDay(dhtData, DHTData::getHumidity),
+                                    "Влажность",
+                                    Color.rgb(101,203,225),
+                                    Color.rgb(180,230,235)
+                            ).create()
+            );
+
+            monthTemperatureChart.setData(
+                    new LineChartDataBuilder()
+                            .addLine(
+                                    createEntryListForMonth(dhtData, DHTData::getTemperature, Factor.MAX),
+                                    "Максимальная температура",
+                                    Color.rgb(227, 127, 127),
+                                    Color.rgb(222, 162, 162)
+                            ).addLine(
+                                    createEntryListForMonth(dhtData, DHTData::getTemperature, Factor.MIN),
+                                    "Минимальная температура",
+                                    Color.rgb(101,203,225),
+                                    Color.rgb(180,230,235)
+                            ).create()
+            );
+            monthHumidityChart.setData(new LineChartDataBuilder()
+                    .addLine(
+                            createEntryListForMonth(dhtData, DHTData::getHumidity, Factor.MAX),
+                            "Максимальная влажность",
+                            Color.rgb(227, 127, 127),
+                            Color.rgb(222, 162, 162)
+                    ).addLine(
+                            createEntryListForMonth(dhtData, DHTData::getHumidity, Factor.MIN),
+                            "Минимальная влажность",
+                            Color.rgb(101,203,225),
+                            Color.rgb(180,230,235)
+                    ).create());
+        });
+
     }
 
-    private void createChartsForMonth(Context context) {
-        ArrayList<Entry> maxTemperatureEntries = new ArrayList<>();
-        ArrayList<Entry> minTemperatureEntries = new ArrayList<>();
-        ArrayList<Entry> maxHumidityEntries = new ArrayList<>();
-        ArrayList<Entry> minHumidityEntries = new ArrayList<>();
-        
-        Date startDay = Date.from(
-                LocalDateTime.now()
-                        .truncatedTo(ChronoUnit.DAYS)
-                        .minusMonths(1)
-                        .atZone(ZoneId.systemDefault())
-                        .toInstant()
-        );
-        Date endDay = Date.from(
-                LocalDateTime.now()
-                        .truncatedTo(ChronoUnit.DAYS)
-                        .minusMonths(1)
-                        .plusDays(1)
-                        .atZone(ZoneId.systemDefault())
-                        .toInstant()
-        );
-        Date terminalDate = Date.from(
-                LocalDateTime.now()
-                        .truncatedTo(ChronoUnit.DAYS)
-                        .plusDays(1)
-                        .atZone(ZoneId.systemDefault())
-                        .toInstant()
-        );
-
-        while (!startDay.equals(terminalDate)) {
-            Date finalStartDay = startDay;
-            Date finalEndDay = endDay;
-
-            Supplier<Stream<DHTData>> requiredDataPeriodStream = () -> dataList.stream()
-                    .filter(
-                            dhtData -> dhtData.getDatetime().after(finalStartDay) &&
-                                            dhtData.getDatetime().before(finalEndDay)
-                    );
-            DHTData maxTemperature = requiredDataPeriodStream.get()
-                    .max(Comparator.comparing(DHTData::getTemperature))
-                    .orElse(null);
-            DHTData minTemperature = requiredDataPeriodStream.get()
-                    .min(Comparator.comparing(DHTData::getTemperature))
-                    .orElse(null);
-            DHTData maxHumidity = requiredDataPeriodStream.get()
-                    .max(Comparator.comparing(DHTData::getHumidity))
-                    .orElse(null);
-            DHTData minHumidity = requiredDataPeriodStream.get()
-                    .min(Comparator.comparing(DHTData::getHumidity))
-                    .orElse(null);
-
-            if (maxTemperature != null) {
-                maxTemperature.setDatetime(Date.from(
-                        maxTemperature.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
-                ));
-                maxTemperatureEntries.add(new Entry(
-                        maxTemperature.getDatetime().getTime(),
-                        maxTemperature.getTemperature().floatValue(),
-                        maxTemperature
-                ));
-            }
-
-            if (minTemperature != null) {
-                minTemperature.setDatetime(Date.from(
-                        minTemperature.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
-                ));
-                minTemperatureEntries.add(new Entry(
-                        minTemperature.getDatetime().getTime(),
-                        minTemperature.getTemperature().floatValue(),
-                        minTemperature
-                ));
-            }
-            if (maxHumidity != null) {
-                maxHumidity.setDatetime(Date.from(
-                        maxHumidity.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
-                ));
-                maxHumidityEntries.add(new Entry(
-                        maxHumidity.getDatetime().getTime(),
-                        maxHumidity.getHumidity().floatValue(),
-                        maxHumidity
-                ));
-            }
-            if (minHumidity != null) {
-                minHumidity.setDatetime(Date.from(
-                        minHumidity.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
-                ));
-                minHumidityEntries.add(new Entry(
-                        minHumidity.getDatetime().getTime(),
-                        minHumidity.getHumidity().floatValue(),
-                        minHumidity
-                ));
-            }
-
-            startDay = Date.from(
-                    startDay.toInstant().plus(1, ChronoUnit.DAYS)
-            );
-            endDay = Date.from(
-                    startDay.toInstant().plus(1, ChronoUnit.DAYS)
-            );
-        }
-
-        LineDataSet maxTemperatureDataSet = createChartDataSet(
-                maxTemperatureEntries,
-                "Максимальная температура",
-                Color.rgb(227, 127, 127),
-                Color.rgb(222, 162, 162)
-        );
-        LineDataSet minTemperatureDataSet = createChartDataSet(
-                minTemperatureEntries,
-                "Минимальная температура",
-                Color.rgb(101,203,225),
-                Color.rgb(180,230,235)
-        );
-
-        List<ILineDataSet> temperatureDataSets = new ArrayList<>();
-        temperatureDataSets.add(maxTemperatureDataSet);
-        temperatureDataSets.add(minTemperatureDataSet);
-
-        LineData temperatureLineData = new LineData(temperatureDataSets);
-        temperatureLineData.setDrawValues(false);
-        monthTemperatureChart.setData(temperatureLineData);
-
-        LineDataSet maxHumidityDataSet = createChartDataSet(
-                maxHumidityEntries,
-                "Максимальная влажность",
-                Color.rgb(227, 127, 127),
-                Color.rgb(222, 162, 162)
-        );
-        LineDataSet minHumidityDataSet = createChartDataSet(
-                minHumidityEntries,
-                "Минимальная влажность",
-                Color.rgb(101,203,225),
-                Color.rgb(180,230,235)
-        );
-
-        List<ILineDataSet> humidityDataSets = new ArrayList<>();
-        humidityDataSets.add(maxHumidityDataSet);
-        humidityDataSets.add(minHumidityDataSet);
-
-        LineData humidityLineData = new LineData(humidityDataSets);
-        humidityLineData.setDrawValues(false);
-        monthHumidityChart.setData(humidityLineData);
-
-        setChartLayout(monthTemperatureChart, "dd", "dd MMMM",
-                true, context);
-        setChartLayout(monthHumidityChart, "dd", "dd MMMM",
-                true,context);
+    private void customizeDayChart(Context context, LineChart dayChart) {
+        new LineChartCustomizer(dayChart)
+                .setMarker(new DHTMarker(context, "HH:mm dd MMMM"))
+                .setXAxisFormatter(new DateAxisFormatter("HH:mm"))
+                .finish();
     }
 
-    private void createChartsForDay(Context context) {
-        setChartLayout(dayTemperatureChart, "HH:mm", "HH:mm dd MMMM",
-                false,context);
-        setChartLayout(dayHumidityChart, "HH:mm", "HH:mm dd MMMM",
-                false,context);
+    private void customizeMonthChart(Context context, LineChart monthChart) {
+        new LineChartCustomizer(monthChart)
+                .setMarker(new DHTMarker(context, "dd MMMM"))
+                .setXAxisFormatter(new DateAxisFormatter("dd"))
+                .finish();
+    }
 
-        ArrayList<Entry> temperatureEntries = new ArrayList<>();
-        ArrayList<Entry> humidityEntries = new ArrayList<>();
+    private ArrayList<Entry> createEntryListForDay(
+            List<DHTData> dataList,
+            Function<DHTData, Double> method
+    ) {
+        ArrayList<Entry> entries = new ArrayList<>();
+
         Date oneDayBefore = Date.from(
                 LocalDateTime.now().minusDays(1).atZone(ZoneId.systemDefault()).toInstant()
         );
         dataList.forEach(dhtData -> {
             if (dhtData.getDatetime().after(oneDayBefore)) {
-                temperatureEntries.add(new Entry(
+                entries.add(new Entry(
                         dhtData.getDatetime().getTime(),
-                        dhtData.getTemperature().floatValue(),
-                        dhtData
-                ));
-                humidityEntries.add(new Entry(
-                        dhtData.getDatetime().getTime(),
-                        dhtData.getHumidity().floatValue(),
+                        method.apply(dhtData).floatValue(),
                         dhtData
                 ));
             }
         });
 
-        LineData temperatureLineData = new LineData(createChartDataSet(
-                temperatureEntries,
-                "Температура",
-                Color.rgb(227, 127, 127),
-                Color.rgb(222, 162, 162)));
-        temperatureLineData.setDrawValues(false);
-        dayTemperatureChart.setData(temperatureLineData);
-        LineData humidityLineData = new LineData(createChartDataSet(
-                humidityEntries,
-                "Влажность",
-                Color.rgb(101,203,225),
-                Color.rgb(180,230,235)));
-        humidityLineData.setDrawValues(false);
-        dayHumidityChart.setData(humidityLineData);
+        return entries;
     }
 
-    private LineDataSet createChartDataSet(ArrayList<Entry> entries, String label, int lineColor, int fillColor) {
-        LineDataSet lineDataSet = new LineDataSet(entries, label);
+    private ArrayList<Entry> createEntryListForMonth(
+            List<DHTData> dataList,
+            Function<DHTData, Double> method, Factor factor
+    ) {
+        ArrayList<Entry> entries = new ArrayList<>();
 
-        lineDataSet.setCubicIntensity(0.2f);
-        lineDataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
-        lineDataSet.setDrawFilled(true);
-        lineDataSet.setLineWidth(2f);
-        lineDataSet.setDrawCircles(false);
-        lineDataSet.setColor(lineColor);
-        lineDataSet.setFillColor(fillColor);
-        lineDataSet.setFillAlpha(100);
-        lineDataSet.setDrawHorizontalHighlightIndicator(false);
+        int control = 0;
+        switch (factor) {
+            case MAX: control = 1; break;
+            case MIN: control = -1; break;
+        }
 
-        return lineDataSet;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(Date.from(new Date().toInstant().truncatedTo(ChronoUnit.DAYS)));
+        calendar.add(Calendar.DATE, -29);
+
+        Date rightDate = calendar.getTime();
+
+        DHTData extreme = null;
+        int i = 0;
+        while (i < dataList.size()) {
+            DHTData dhtData = dataList.get(i);
+            if (dhtData.getDatetime().before(rightDate)) {
+                if (extreme == null) {
+                    extreme = dhtData;
+                } else if (method.apply(dhtData).compareTo(method.apply(extreme)) * control > 0) {
+                    extreme = dhtData;
+                }
+                i++;
+            } else {
+                if (extreme != null) {
+                    extreme.setDatetime(Date.from(
+                            extreme.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
+                    ));
+                    entries.add(new Entry(
+                            extreme.getDatetime().getTime(),
+                            method.apply(extreme).floatValue(),
+                            extreme
+                    ));
+
+                    extreme = null;
+                }
+                calendar.add(Calendar.DATE, 1);
+                rightDate = calendar.getTime();
+            }
+        }
+
+        if (extreme != null) {
+            extreme.setDatetime(Date.from(
+                    extreme.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
+            ));
+            entries.add(new Entry(
+                    extreme.getDatetime().getTime(),
+                    method.apply(extreme).floatValue(),
+                    extreme
+            ));
+        }
+
+        return entries;
     }
 
-    private void setChartLayout(
-            LineChart chart,
-            String axisDateFormat,
-            String markerDateFormat,
-            boolean isXLabelCountDefault,
-            Context context) {
-        chart.setViewPortOffsets(100, 100, 100, 100);
-        chart.getDescription().setEnabled(false);
-
-        // enable touch gestures
-        chart.setTouchEnabled(true);
-
-        // enable scaling and dragging
-        chart.setDragEnabled(true);
-        chart.setScaleEnabled(true);
-        chart.setPinchZoom(false);
-
-        chart.setDrawGridBackground(false);
-        chart.setMaxHighlightDistance(300);
-
-        XAxis x = chart.getXAxis();
-        x.setEnabled(true);
-        if (!isXLabelCountDefault) x.setLabelCount(6, true);
-        x.setTextColor(Color.BLACK);
-        x.setPosition(XAxis.XAxisPosition.BOTTOM);
-        x.setDrawGridLines(false);
-        x.setAxisLineColor(Color.BLACK);
-
-        YAxis y = chart.getAxisLeft();
-        y.setLabelCount(6, true);
-        y.setTextColor(Color.BLACK);
-        y.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
-        y.setDrawGridLines(true);
-        y.setAxisLineColor(Color.BLACK);
-
-        chart.getAxisRight().setEnabled(false);
-
-        chart.getXAxis().setValueFormatter(new DateAxisFormatter(axisDateFormat));
-
-        chart.animateXY(0, 0);
-
-        DHTMarker dhtMarker = new DHTMarker(context, markerDateFormat);
-        dhtMarker.setChartView(chart);
-        chart.setMarker(dhtMarker);
-
-        // don't forget to refresh the drawing
-        chart.invalidate();
+    private enum Factor {
+        MAX, MIN
     }
 
 }
