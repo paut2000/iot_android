@@ -7,31 +7,24 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.*;
-import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.MPPointF;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import iot.android.client.R;
 import iot.android.client.databinding.RelayStatisticViewBinding;
 import iot.android.client.model.device.actuator.Relay;
-import iot.android.client.model.device.data.AbstractData;
 import iot.android.client.model.device.data.RelayData;
 import iot.android.client.ui.chart.HorizontalBarChartCustomizer;
 import iot.android.client.ui.chart.axis.DateAxisFormatter;
-import iot.android.client.ui.chart.data.CustomBarDataSet;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -40,7 +33,7 @@ public class RelayStatisticView extends ConstraintLayout {
     private final Relay relay;
 
     private final PieChart pieChart;
-    private final BarChart barChart;
+    private final HorizontalBarChart barChart;
 
     public RelayStatisticView(Context context, Relay relay) {
         super(context);
@@ -109,7 +102,7 @@ public class RelayStatisticView extends ConstraintLayout {
             ArrayList<BarEntry> entries = new ArrayList<>();
             entries.add(new BarEntry(0, periods, periodDataList));
 
-            CustomBarDataSet set = new CustomBarDataSet(entries, null);
+            BarDataSet set = new BarDataSet(entries, null);
 
             if (periodDataList.get(0).getStatus() == true) {
                 set.setColors(
@@ -131,19 +124,21 @@ public class RelayStatisticView extends ConstraintLayout {
         });
     }
 
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    private class RelayPeriodData extends RelayData {
+
+        private Date endDatetime;
+
+    }
+
     private void setCustomHorizontalBarChart(HorizontalBarChart chart) {
         new HorizontalBarChartCustomizer(chart)
                 .setXAxisFormatter(new DateAxisFormatter("HH:mm"))
                 .finish();
     }
 
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    public class RelayPeriodData extends RelayData {
 
-        private Date endDatetime;
-
-    }
 
 }

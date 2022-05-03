@@ -185,6 +185,11 @@ public class DHTStatisticView extends ConstraintLayout {
                 i++;
             } else {
                 if (extreme != null) {
+                    try {
+                        extreme = (DHTData) extreme.clone();
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                    }
                     extreme.setDatetime(Date.from(
                             extreme.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
                     ));
@@ -202,6 +207,11 @@ public class DHTStatisticView extends ConstraintLayout {
         }
 
         if (extreme != null) {
+            try {
+                extreme = (DHTData) extreme.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
             extreme.setDatetime(Date.from(
                     extreme.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
             ));

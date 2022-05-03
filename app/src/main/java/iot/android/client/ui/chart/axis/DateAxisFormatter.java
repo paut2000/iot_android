@@ -10,6 +10,7 @@ public class DateAxisFormatter extends IndexAxisValueFormatter {
     final String dateFormat;
 
     public DateAxisFormatter(String dateFormat) {
+        super();
         this.dateFormat = dateFormat;
     }
 

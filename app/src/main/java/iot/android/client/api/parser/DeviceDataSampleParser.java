@@ -31,7 +31,7 @@ public class DeviceDataSampleParser extends StdDeserializer<DeviceDataSampleMess
 
         String type = node.get("type").asText();
 
-        ObjectMapper mapper = ((ObjectMapper) jsonParser.getCodec()).registerModule(
+        ObjectMapper mapper = new ObjectMapper().registerModule(
                 new SimpleModule().addDeserializer(AbstractData.class, new DeviceDataJsonParser(type))
         );
 
