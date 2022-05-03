@@ -16,6 +16,7 @@ import iot.android.client.model.device.actuator.Relay;
 import iot.android.client.model.device.data.RelayData;
 import iot.android.client.ui.chart.HorizontalBarChartCustomizer;
 import iot.android.client.ui.chart.axis.DateAxisFormatter;
+import iot.android.client.ui.chart.marker.RelayMarker;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -135,7 +136,7 @@ public class RelayStatisticView extends ConstraintLayout {
     @NoArgsConstructor
     @Getter
     @Setter
-    private class RelayPeriodData extends RelayData {
+    public class RelayPeriodData extends RelayData {
 
         private Date endDatetime;
 
@@ -143,6 +144,7 @@ public class RelayStatisticView extends ConstraintLayout {
 
     private void setCustomHorizontalBarChart(Long epochShift, HorizontalBarChart chart) {
         new HorizontalBarChartCustomizer(chart)
+                .setMarker(new RelayMarker(getContext(), "HH:mm"))
                 .setXAxisFormatter(new DateAxisFormatter(epochShift, "HH:mm"))
                 .finish();
     }
