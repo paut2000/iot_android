@@ -83,8 +83,8 @@ public class DHTStatisticView extends ConstraintLayout {
                             .addLine(
                                     createEntryListForDay(dhtData, DHTData::getHumidity),
                                     "Влажность",
-                                    Color.rgb(101,203,225),
-                                    Color.rgb(180,230,235)
+                                    Color.rgb(81, 186, 69),
+                                    Color.rgb(118, 181, 110)
                             ).create()
             );
 
@@ -106,13 +106,13 @@ public class DHTStatisticView extends ConstraintLayout {
                     .addLine(
                             createEntryListForMonth(dhtData, DHTData::getHumidity, Factor.MAX),
                             "Максимальная влажность",
-                            Color.rgb(227, 127, 127),
-                            Color.rgb(222, 162, 162)
+                            Color.rgb(81, 186, 69),
+                            Color.rgb(118, 181, 110)
                     ).addLine(
                             createEntryListForMonth(dhtData, DHTData::getHumidity, Factor.MIN),
                             "Минимальная влажность",
-                            Color.rgb(101,203,225),
-                            Color.rgb(180,230,235)
+                            Color.rgb(176, 165, 70),
+                            Color.rgb(179, 170, 96)
                     ).create());
         });
 
