@@ -121,14 +121,14 @@ public class DHTStatisticView extends ConstraintLayout {
     private void customizeDayChart(Context context, LineChart dayChart) {
         new LineChartCustomizer(dayChart)
                 .setMarker(new DHTMarker(context, "HH:mm dd MMMM"))
-                .setXAxisFormatter(new DateAxisFormatter("HH:mm"))
+                .setXAxisFormatter(new DateAxisFormatter(0L,"HH:mm"))
                 .finish();
     }
 
     private void customizeMonthChart(Context context, LineChart monthChart) {
         new LineChartCustomizer(monthChart)
                 .setMarker(new DHTMarker(context, "dd MMMM"))
-                .setXAxisFormatter(new DateAxisFormatter("dd"))
+                .setXAxisFormatter(new DateAxisFormatter(0L,"dd"))
                 .finish();
     }
 

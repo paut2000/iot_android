@@ -52,8 +52,6 @@ public class RelayStatisticView extends ConstraintLayout {
     }
 
     private void init(Context context) {
-        setCustomHorizontalBarChart(barChart);
-
         Date nowDate = new Date();
         Timestamp now = new Timestamp(nowDate.getTime());
 
@@ -67,6 +65,8 @@ public class RelayStatisticView extends ConstraintLayout {
 
         relay.requestSampleForPeriod(monthAgo, now, message -> {
             ArrayList<RelayData> dataList = (ArrayList<RelayData>) (ArrayList<?>) message.getDataList();
+
+            setCustomHorizontalBarChart(dataList.get(0).getDatetime().getTime(), barChart);
 
 
             ArrayList<RelayPeriodData> periodDataList = new ArrayList<>();
@@ -106,13 +106,21 @@ public class RelayStatisticView extends ConstraintLayout {
 
             if (periodDataList.get(0).getStatus() == true) {
                 set.setColors(
-                        Color.rgb(227, 208, 0),
-                        Color.rgb(0, 208, 227)
+                        Color.rgb(66, 135, 245),
+                        Color.rgb(59, 20, 175)
                 );
+                set.setStackLabels(new String[] {
+                        "Вкл",
+                        "Выкл"
+                });
             } else {
+                set.setStackLabels(new String[] {
+                        "Выкл",
+                        "Вкл"
+                });
                 set.setColors(
-                        Color.rgb(0, 208, 227),
-                        Color.rgb(227, 208, 0)
+                        Color.rgb(59, 20, 175),
+                        Color.rgb(66, 135, 245)
                 );
             }
 
@@ -133,9 +141,9 @@ public class RelayStatisticView extends ConstraintLayout {
 
     }
 
-    private void setCustomHorizontalBarChart(HorizontalBarChart chart) {
+    private void setCustomHorizontalBarChart(Long epochShift, HorizontalBarChart chart) {
         new HorizontalBarChartCustomizer(chart)
-                .setXAxisFormatter(new DateAxisFormatter("HH:mm"))
+                .setXAxisFormatter(new DateAxisFormatter(epochShift, "HH:mm"))
                 .finish();
     }
 
