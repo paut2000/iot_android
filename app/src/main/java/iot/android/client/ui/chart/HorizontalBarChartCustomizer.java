@@ -39,6 +39,7 @@ public class HorizontalBarChartCustomizer {
         chart.setDrawValueAboveBar(false);
         chart.setHighlightFullBarEnabled(false);
         chart.getDescription().setEnabled(false);
+        chart.getLegend().setEnabled(false);
         chart.setTouchEnabled(true);
         chart.setDragEnabled(true);
         chart.setScaleXEnabled(true);

@@ -33,7 +33,6 @@ public class RelayStatisticView extends ConstraintLayout {
 
     private final Relay relay;
 
-    private final PieChart pieChart;
     private final HorizontalBarChart barChart;
 
     public RelayStatisticView(Context context, Relay relay) {
@@ -46,7 +45,6 @@ public class RelayStatisticView extends ConstraintLayout {
 
         RelayStatisticViewBinding binding = RelayStatisticViewBinding.bind(this);
 
-        pieChart = binding.pieChart;
         barChart = binding.barChart;
 
         init(context);
@@ -105,26 +103,14 @@ public class RelayStatisticView extends ConstraintLayout {
 
             BarDataSet set = new BarDataSet(entries, null);
 
-            if (periodDataList.get(0).getStatus() == true) {
-                set.setColors(
-                        Color.rgb(66, 135, 245),
-                        Color.rgb(59, 20, 175)
-                );
-                set.setStackLabels(new String[] {
-                        "Вкл",
-                        "Выкл"
-                });
-            } else {
-                set.setStackLabels(new String[] {
-                        "Выкл",
-                        "Вкл"
-                });
-                set.setColors(
-                        Color.rgb(59, 20, 175),
-                        Color.rgb(66, 135, 245)
-                );
-            }
-
+            set.resetColors();
+            periodDataList.forEach(data -> {
+                if (data.getStatus() == true) {
+                    set.addColor(Color.rgb(66, 135, 245));
+                } else {
+                    set.addColor(Color.rgb(59, 20, 175));
+                }
+            });
 
             BarData barData = new BarData(set);
             barData.setDrawValues(false);
