@@ -23,7 +23,7 @@ public class DatePickerDialogCreator {
 
         return new AlertDialog.Builder(context)
                 .setView(datePicker)
-                .setTitle("Выберите цвет")
+                .setTitle("Выберите дату")
                 .setPositiveButton("Выбрать", (dialogInterface, i) -> {
                     int year = datePicker.getYear();
                     int month = datePicker.getMonth();
