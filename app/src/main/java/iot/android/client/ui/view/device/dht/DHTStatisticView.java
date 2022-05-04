@@ -3,6 +3,8 @@ package iot.android.client.ui.view.device.dht;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.widget.Button;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -15,6 +17,7 @@ import iot.android.client.ui.chart.LineChartDataBuilder;
 import iot.android.client.ui.chart.axis.DateAxisFormatter;
 import iot.android.client.ui.chart.marker.DHTMarker;
 import iot.android.client.ui.utils.DateTimeUtils;
+import iot.android.client.ui.view.datePicker.DatePickerDialogCreator;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -35,6 +38,10 @@ public class DHTStatisticView extends ConstraintLayout {
     private final LineChart monthTemperatureChart;
     private final LineChart monthHumidityChart;
 
+    private final Button datePickerButton;
+
+    private AlertDialog datePickerDialog;
+
     public DHTStatisticView(Context context, DHT dht) {
         super(context);
 
@@ -49,6 +56,7 @@ public class DHTStatisticView extends ConstraintLayout {
         dayHumidityChart = binding.dayHumidityChart;
         monthTemperatureChart = binding.monthTemperatureChart;
         monthHumidityChart = binding.monthHumidityChart;
+        datePickerButton = binding.datePickerButton;
 
         init(context);
     }
@@ -62,14 +70,60 @@ public class DHTStatisticView extends ConstraintLayout {
         Date nowDate = new Date();
         Timestamp now = new Timestamp(nowDate.getTime());
 
+        Date midnightTodayDate = DateTimeUtils.truncateToMidnight(nowDate);
+        Timestamp midnightToday = new Timestamp(midnightTodayDate.getTime());
+
+        createChartsForDay(midnightToday, now);
+
+        datePickerDialog = DatePickerDialogCreator.createDatePickerDialog(getContext(), nowDate.getTime(), timestamp -> {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date(timestamp.getTime()));
+            calendar.add(Calendar.DATE, 1);
+
+            Timestamp endOfPeriodTimestamp = new Timestamp(calendar.getTime().getTime());
+
+            if (endOfPeriodTimestamp.compareTo(now) > 0) {
+                endOfPeriodTimestamp = now;
+            }
+
+            createChartsForDay(timestamp, endOfPeriodTimestamp);
+        });
+
+        datePickerButton.setOnClickListener(view -> {
+            datePickerDialog.show();
+        });
+
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(nowDate);
         calendar.add(Calendar.DATE, -30);
+        Date monthAgoMidnightDate = DateTimeUtils.truncateToMidnight(calendar.getTime());
 
-        Timestamp monthAgo = new Timestamp(calendar.getTime().getTime());
+        Timestamp monthAgoMidnight = new Timestamp(monthAgoMidnightDate.getTime());
 
-        dht.requestSampleForPeriod(monthAgo, now, message -> {
+        createChartsForMonth(monthAgoMidnight, now);
+    }
+
+    private void customizeDayChart(Context context, LineChart dayChart) {
+        new LineChartCustomizer(dayChart)
+                .setMarker(new DHTMarker(context, "HH:mm"))
+                .setXAxisFormatter(new DateAxisFormatter(0L,"HH:mm"))
+                .finish();
+    }
+
+    private void customizeMonthChart(Context context, LineChart monthChart) {
+        new LineChartCustomizer(monthChart)
+                .setMarker(new DHTMarker(context, "dd MMMM"))
+                .setXAxisFormatter(new DateAxisFormatter(0L,"dd"))
+                .finish();
+    }
+
+    private void createChartsForDay(Timestamp startTimestamp, Timestamp endTimestamp) {
+        dayHumidityChart.clear();
+        dayTemperatureChart.clear();
+        dht.requestSampleForPeriod(startTimestamp, endTimestamp, message -> {
             ArrayList<DHTData> dhtData = (ArrayList<DHTData>) (ArrayList<?>) message.getDataList();
+
             dayTemperatureChart.setData(
                     new LineChartDataBuilder()
                             .addLine(
@@ -88,6 +142,14 @@ public class DHTStatisticView extends ConstraintLayout {
                                     Color.rgb(118, 181, 110)
                             ).create()
             );
+        });
+    }
+
+    private void createChartsForMonth(Timestamp startTimestamp, Timestamp endTimestamp) {
+        monthHumidityChart.clear();
+        monthTemperatureChart.clear();
+        dht.requestSampleForPeriod(startTimestamp, endTimestamp, message -> {
+            ArrayList<DHTData> dhtData = (ArrayList<DHTData>) (ArrayList<?>) message.getDataList();
 
             monthTemperatureChart.setData(
                     new LineChartDataBuilder()
@@ -116,21 +178,6 @@ public class DHTStatisticView extends ConstraintLayout {
                             Color.rgb(179, 170, 96)
                     ).create());
         });
-
-    }
-
-    private void customizeDayChart(Context context, LineChart dayChart) {
-        new LineChartCustomizer(dayChart)
-                .setMarker(new DHTMarker(context, "HH:mm dd MMMM"))
-                .setXAxisFormatter(new DateAxisFormatter(0L,"HH:mm"))
-                .finish();
-    }
-
-    private void customizeMonthChart(Context context, LineChart monthChart) {
-        new LineChartCustomizer(monthChart)
-                .setMarker(new DHTMarker(context, "dd MMMM"))
-                .setXAxisFormatter(new DateAxisFormatter(0L,"dd"))
-                .finish();
     }
 
     private ArrayList<Entry> createEntryListForDay(
@@ -139,17 +186,12 @@ public class DHTStatisticView extends ConstraintLayout {
     ) {
         ArrayList<Entry> entries = new ArrayList<>();
 
-        Date oneDayBefore = Date.from(
-                LocalDateTime.now().minusDays(1).atZone(ZoneId.systemDefault()).toInstant()
-        );
         dataList.forEach(dhtData -> {
-            if (dhtData.getDatetime().after(oneDayBefore)) {
-                entries.add(new Entry(
-                        dhtData.getDatetime().getTime(),
-                        method.apply(dhtData).floatValue(),
-                        dhtData
-                ));
-            }
+            entries.add(new Entry(
+                    dhtData.getDatetime().getTime(),
+                    method.apply(dhtData).floatValue(),
+                    dhtData
+            ));
         });
 
         return entries;
