@@ -52,44 +52,38 @@ public class RGBAStripStatisticView extends ConstraintLayout {
         Date nowDate = new Date();
         Timestamp now = new Timestamp(nowDate.getTime());
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(nowDate);
-        calendar.add(Calendar.DATE, -30);
+        Date midnightTodayDate = Date.from(nowDate.toInstant().truncatedTo(ChronoUnit.DAYS));
+        Timestamp midnightToday = new Timestamp(midnightTodayDate.getTime());
 
-        Timestamp monthAgo = new Timestamp(calendar.getTime().getTime());
-
-        Date midnightToday = Date.from(nowDate.toInstant().truncatedTo(ChronoUnit.DAYS));
-
-        strip.requestSampleForPeriod(monthAgo, now, message -> {
+        strip.requestSampleForPeriod(midnightToday, now, message -> {
             ArrayList<RGBAStripData> dataList = (ArrayList<RGBAStripData>) (ArrayList<?>) message.getDataList();
+
+            if (dataList.isEmpty()) return;
 
             setCustomHorizontalBarChart(dataList.get(0).getDatetime().getTime(), barChart);
 
 
             ArrayList<RGBAStripPeriodData> periodDataList = new ArrayList<>();
-            ArrayList<RGBAStripData> oneDayData = dataList.stream()
-                    .filter(relayData -> relayData.getDatetime().after(midnightToday))
-                    .collect(Collectors.toCollection(ArrayList::new));
 
-            for (int i = 0; i < oneDayData.size(); i++) {
+            for (int i = 0; i < dataList.size(); i++) {
                 RGBAStripPeriodData periodData = new RGBAStripPeriodData();
-                periodData.setDatetime(oneDayData.get(i).getDatetime());
-                periodData.setAlfa(oneDayData.get(i).getAlfa());
-                periodData.setRed(oneDayData.get(i).getRed());
-                periodData.setGreen(oneDayData.get(i).getGreen());
-                periodData.setBlue(oneDayData.get(i).getBlue());
+                periodData.setDatetime(dataList.get(i).getDatetime());
+                periodData.setAlfa(dataList.get(i).getAlfa());
+                periodData.setRed(dataList.get(i).getRed());
+                periodData.setGreen(dataList.get(i).getGreen());
+                periodData.setBlue(dataList.get(i).getBlue());
 
-                for (int j = i + 1; j < oneDayData.size(); i++, j++) {
-                    if (periodData.getAlfa() != oneDayData.get(j).getAlfa() ||
-                            periodData.getRed() != oneDayData.get(j).getRed() ||
-                            periodData.getGreen() != oneDayData.get(j).getGreen() ||
-                            periodData.getBlue() != oneDayData.get(j).getBlue()) {
-                        periodData.setEndDatetime(oneDayData.get(j).getDatetime());
+                for (int j = i + 1; j < dataList.size(); i++, j++) {
+                    if (periodData.getAlfa() != dataList.get(j).getAlfa() ||
+                            periodData.getRed() != dataList.get(j).getRed() ||
+                            periodData.getGreen() != dataList.get(j).getGreen() ||
+                            periodData.getBlue() != dataList.get(j).getBlue()) {
+                        periodData.setEndDatetime(dataList.get(j).getDatetime());
                         break;
                     }
                 }
 
-                if (i + 1 == oneDayData.size()) {
+                if (i + 1 == dataList.size()) {
                     periodData.setEndDatetime(nowDate);
                 }
 

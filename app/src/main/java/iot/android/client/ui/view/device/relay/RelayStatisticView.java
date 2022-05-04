@@ -52,38 +52,32 @@ public class RelayStatisticView extends ConstraintLayout {
         Date nowDate = new Date();
         Timestamp now = new Timestamp(nowDate.getTime());
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(nowDate);
-        calendar.add(Calendar.DATE, -30);
+        Date midnightTodayDate = Date.from(nowDate.toInstant().truncatedTo(ChronoUnit.DAYS));
+        Timestamp midnightToday = new Timestamp(midnightTodayDate.getTime());
 
-        Timestamp monthAgo = new Timestamp(calendar.getTime().getTime());
-
-        Date midnightToday = Date.from(nowDate.toInstant().truncatedTo(ChronoUnit.DAYS));
-
-        relay.requestSampleForPeriod(monthAgo, now, message -> {
+        relay.requestSampleForPeriod(midnightToday, now, message -> {
             ArrayList<RelayData> dataList = (ArrayList<RelayData>) (ArrayList<?>) message.getDataList();
+
+            if (dataList.isEmpty()) return;
 
             setCustomHorizontalBarChart(dataList.get(0).getDatetime().getTime(), barChart);
 
 
             ArrayList<RelayPeriodData> periodDataList = new ArrayList<>();
-            ArrayList<RelayData> oneDayData = dataList.stream()
-                    .filter(relayData -> relayData.getDatetime().after(midnightToday))
-                    .collect(Collectors.toCollection(ArrayList::new));
 
-            for (int i = 0; i < oneDayData.size(); i++) {
+            for (int i = 0; i < dataList.size(); i++) {
                 RelayPeriodData periodData = new RelayPeriodData();
-                periodData.setDatetime(oneDayData.get(i).getDatetime());
-                periodData.setStatus(oneDayData.get(i).getStatus());
+                periodData.setDatetime(dataList.get(i).getDatetime());
+                periodData.setStatus(dataList.get(i).getStatus());
 
-                for (int j = i + 1; j < oneDayData.size(); i++, j++) {
-                    if (periodData.getStatus() != oneDayData.get(j).getStatus()) {
-                        periodData.setEndDatetime(oneDayData.get(j).getDatetime());
+                for (int j = i + 1; j < dataList.size(); i++, j++) {
+                    if (periodData.getStatus() != dataList.get(j).getStatus()) {
+                        periodData.setEndDatetime(dataList.get(j).getDatetime());
                         break;
                     }
                 }
 
-                if (i + 1 == oneDayData.size()) {
+                if (i + 1 == dataList.size()) {
                     periodData.setEndDatetime(nowDate);
                 }
 
