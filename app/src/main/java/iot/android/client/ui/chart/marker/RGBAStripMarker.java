@@ -39,6 +39,8 @@ public class RGBAStripMarker extends MarkerView {
     public void refreshContent(Entry e, Highlight highlight) {
         int periodIndex = highlight.getStackIndex();
 
+        if (periodIndex < 0) periodIndex = 0;
+
         RGBAStripStatisticView.RGBAStripPeriodData data =
                 ((ArrayList<RGBAStripStatisticView.RGBAStripPeriodData>) e.getData()).get(periodIndex);
 

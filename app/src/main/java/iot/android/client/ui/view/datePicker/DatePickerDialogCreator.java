@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.DatePicker;
 import androidx.appcompat.app.AlertDialog;
 import iot.android.client.callback.OnSelectDateCallback;
+import iot.android.client.ui.utils.DateTimeUtils;
 
 import java.sql.Timestamp;
 import java.time.temporal.ChronoUnit;
@@ -32,7 +33,7 @@ public class DatePickerDialogCreator {
                     calendar.set(year, month, day);
 
                     Timestamp timestamp = new Timestamp(
-                            Date.from(calendar.getTime().toInstant().truncatedTo(ChronoUnit.DAYS)).getTime()
+                            DateTimeUtils.truncateToMidnight(calendar.getTime()).getTime()
                     );
 
                     callback.onSelect(timestamp);

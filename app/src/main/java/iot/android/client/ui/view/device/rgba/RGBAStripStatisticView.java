@@ -3,6 +3,8 @@ package iot.android.client.ui.view.device.rgba;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.widget.Button;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.data.BarData;
@@ -16,6 +18,7 @@ import iot.android.client.ui.chart.HorizontalBarChartCustomizer;
 import iot.android.client.ui.chart.axis.DateAxisFormatter;
 import iot.android.client.ui.chart.marker.RGBAStripMarker;
 import iot.android.client.ui.utils.DateTimeUtils;
+import iot.android.client.ui.view.datePicker.DatePickerDialogCreator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,6 +36,9 @@ public class RGBAStripStatisticView extends ConstraintLayout {
     private final RGBAStrip strip;
 
     private final HorizontalBarChart barChart;
+    private final Button datePickerButton;
+
+    private AlertDialog datePickerDialog;
 
     public RGBAStripStatisticView(Context context, RGBAStrip strip) {
         super(context);
@@ -45,6 +51,7 @@ public class RGBAStripStatisticView extends ConstraintLayout {
         RelayStatisticViewBinding binding = RelayStatisticViewBinding.bind(this);
 
         barChart = binding.barChart;
+        datePickerButton = binding.datePickerButton;
 
         init();
     }
@@ -56,7 +63,30 @@ public class RGBAStripStatisticView extends ConstraintLayout {
         Date midnightTodayDate = DateTimeUtils.truncateToMidnight(nowDate);
         Timestamp midnightToday = new Timestamp(midnightTodayDate.getTime());
 
-        strip.requestSampleForPeriod(midnightToday, now, message -> {
+        createChartsForDay(midnightToday, now);
+
+        datePickerDialog = DatePickerDialogCreator.createDatePickerDialog(getContext(), nowDate.getTime(), timestamp -> {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date(timestamp.getTime()));
+            calendar.add(Calendar.DATE, 1);
+
+            Timestamp endOfPeriodTimestamp = new Timestamp(calendar.getTime().getTime());
+
+            if (endOfPeriodTimestamp.compareTo(now) > 0) {
+                endOfPeriodTimestamp = now;
+            }
+
+            createChartsForDay(timestamp, endOfPeriodTimestamp);
+        });
+
+        datePickerButton.setOnClickListener(view -> {
+            datePickerDialog.show();
+        });
+    }
+
+    private void createChartsForDay(Timestamp startTimestamp, Timestamp endTimestamp) {
+        barChart.clear();
+        strip.requestSampleForPeriod(startTimestamp, endTimestamp, message -> {
             ArrayList<RGBAStripData> dataList = (ArrayList<RGBAStripData>) (ArrayList<?>) message.getDataList();
 
             if (dataList.isEmpty()) return;
@@ -85,7 +115,7 @@ public class RGBAStripStatisticView extends ConstraintLayout {
                 }
 
                 if (i + 1 == dataList.size()) {
-                    periodData.setEndDatetime(nowDate);
+                    periodData.setEndDatetime(new Date(endTimestamp.getTime()));
                 }
 
                 periodDataList.add(periodData);
