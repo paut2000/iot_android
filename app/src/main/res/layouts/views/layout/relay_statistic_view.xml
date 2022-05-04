@@ -11,6 +11,17 @@
             android:layout_width="match_parent"
             android:orientation="vertical">
 
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Данные за день"/>
+
+        <Button android:id="@+id/date_picker_button"
+                android:text="Выбрать день"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
         <com.github.mikephil.charting.charts.HorizontalBarChart
                 android:id="@+id/bar_chart"
                 android:layout_width="match_parent"

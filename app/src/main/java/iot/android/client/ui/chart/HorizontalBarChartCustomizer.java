@@ -40,6 +40,7 @@ public class HorizontalBarChartCustomizer {
         chart.setHighlightFullBarEnabled(false);
         chart.getDescription().setEnabled(false);
         chart.getLegend().setEnabled(false);
+        chart.setNoDataText("Нет данных");
         chart.setTouchEnabled(true);
         chart.setDragEnabled(true);
         chart.setScaleXEnabled(true);

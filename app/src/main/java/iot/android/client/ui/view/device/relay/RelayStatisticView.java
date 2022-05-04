@@ -3,6 +3,9 @@ package iot.android.client.ui.view.device.relay;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.widget.Button;
+import android.widget.DatePicker;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.data.BarData;
@@ -15,11 +18,13 @@ import iot.android.client.model.device.data.RelayData;
 import iot.android.client.ui.chart.HorizontalBarChartCustomizer;
 import iot.android.client.ui.chart.axis.DateAxisFormatter;
 import iot.android.client.ui.chart.marker.RelayMarker;
+import iot.android.client.ui.view.datePicker.DatePickerDialogCreator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,6 +37,9 @@ public class RelayStatisticView extends ConstraintLayout {
     private final Relay relay;
 
     private final HorizontalBarChart barChart;
+    private final Button datePickerButton;
+
+    private AlertDialog datePickerDialog;
 
     public RelayStatisticView(Context context, Relay relay) {
         super(context);
@@ -44,18 +52,37 @@ public class RelayStatisticView extends ConstraintLayout {
         RelayStatisticViewBinding binding = RelayStatisticViewBinding.bind(this);
 
         barChart = binding.barChart;
+        datePickerButton = binding.datePickerButton;
 
         init(context);
     }
 
     private void init(Context context) {
+
         Date nowDate = new Date();
         Timestamp now = new Timestamp(nowDate.getTime());
 
         Date midnightTodayDate = Date.from(nowDate.toInstant().truncatedTo(ChronoUnit.DAYS));
         Timestamp midnightToday = new Timestamp(midnightTodayDate.getTime());
 
-        relay.requestSampleForPeriod(midnightToday, now, message -> {
+        createChartsForDay(midnightToday, now);
+
+        datePickerDialog = DatePickerDialogCreator.createDatePickerDialog(context, nowDate.getTime(), timestamp -> {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date(timestamp.getTime()));
+            calendar.add(Calendar.DATE, 1);
+
+            createChartsForDay(timestamp, new Timestamp(calendar.getTime().getTime()));
+        });
+
+        datePickerButton.setOnClickListener(view -> {
+            datePickerDialog.show();
+        });
+    }
+
+    private void createChartsForDay(Timestamp startTimestamp, Timestamp endTimestamp) {
+        barChart.clear();
+        relay.requestSampleForPeriod(startTimestamp, endTimestamp, message -> {
             ArrayList<RelayData> dataList = (ArrayList<RelayData>) (ArrayList<?>) message.getDataList();
 
             if (dataList.isEmpty()) return;
@@ -78,7 +105,7 @@ public class RelayStatisticView extends ConstraintLayout {
                 }
 
                 if (i + 1 == dataList.size()) {
-                    periodData.setEndDatetime(nowDate);
+                    periodData.setEndDatetime(new Date(endTimestamp.getTime()));
                 }
 
                 periodDataList.add(periodData);

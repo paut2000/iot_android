@@ -36,6 +36,7 @@ public class LineChartCustomizer {
     private void generalPlotLayout() {
         chart.setViewPortOffsets(100, 100, 100, 100);
         chart.getDescription().setEnabled(false);
+        chart.setNoDataText("Нет данных");
         // enable touch gestures
         chart.setTouchEnabled(true);
         // enable scaling and dragging
