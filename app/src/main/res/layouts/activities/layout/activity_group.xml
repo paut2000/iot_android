@@ -1,28 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
         tools:context=".ui.activity.GroupActivity">
-
-    <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:elevation="4dp"/>
 
     <FrameLayout
             android:id="@+id/place_for_devices_container"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/add_device_button"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:id="@+id/add_device_button"
+            android:text="Изменить состав группы"
+            app:layout_constraintTop_toBottomOf="@id/place_for_devices_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:id="@+id/rename_group_button"
+            android:text="Переименовать группу"
+            app:layout_constraintTop_toBottomOf="@id/add_device_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:id="@+id/delete_group_button"
+            android:text="Удалить группу"
+            app:layout_constraintTop_toBottomOf="@id/rename_group_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     <TextView
             android:id="@+id/no_devices_in_group"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:visibility="invisible"
             android:gravity="center"
-            android:text="@string/no_devices_in_group"/>
+            android:text="@string/no_devices_in_group"
+            app:layout_constraintTop_toBottomOf="@+id/delete_group_button"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,6 +27,38 @@ public class GroupDao {
         database = helper.getWritableDatabase();
     }
 
+    public DeviceGroup readById(Long id) {
+        Cursor cursor = database.query(
+                DBHelper.TABLE_GROUPS,
+                null,
+                DBHelper.KEY_GROUP_ID + " = ? ",
+                new String[] { id.toString() },
+                null,
+                null,
+                null
+        );
+
+
+        DeviceGroup group = new DeviceGroup();
+
+        if (cursor.moveToFirst()) {
+            int idIndex = cursor.getColumnIndex(DBHelper.KEY_GROUP_ID);
+            int nameIndex = cursor.getColumnIndex(DBHelper.KEY_GROUP_NAME);
+
+            Long mId = cursor.getLong(idIndex);
+            String name = cursor.getString(nameIndex);
+
+            group.setId(mId);
+            group.setName(name);
+
+            synchronizeGroupsLinksToDevices(group);
+        }
+
+        cursor.close();
+
+        return group;
+    }
+
     public List<DeviceGroup> readAll() {
         ArrayList<DeviceGroup> groups = new ArrayList<>();
 
@@ -68,6 +100,8 @@ public class GroupDao {
      * Group id must be synchronized
      */
     public void synchronizeGroupsLinksToDevices(DeviceGroup group) {
+        group.removeAllDevices();
+
         Cursor cursor = database.query(
                 DBHelper.TABLE_DEVICE_TO_GROUP,
                 new String[] { DBHelper.KEY_DEVICE_TO_GROUP_DEVICE_SERIAL_NUMBER },

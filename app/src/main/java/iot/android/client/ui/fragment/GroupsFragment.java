@@ -15,7 +15,7 @@ import iot.android.client.dao.GroupDao;
 import iot.android.client.databinding.FragmentGroupsBinding;
 import iot.android.client.model.House;
 import iot.android.client.model.group.DeviceGroup;
-import iot.android.client.ui.view.group.GroupView;
+import iot.android.client.ui.view.group.GroupsView;
 
 import javax.inject.Inject;
 
@@ -46,6 +46,12 @@ public class GroupsFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        fillGroupsContainer();
+    }
+
     public void init() {
         addGroupButton.setOnClickListener(view -> {
             createAddGroupDialog().show();
@@ -57,7 +63,7 @@ public class GroupsFragment extends Fragment {
     private void fillGroupsContainer() {
         groupsContainer.removeAllViews();
         groupDao.readAll().forEach(group -> {
-            groupsContainer.addView(new GroupView(getContext(), group));
+            groupsContainer.addView(new GroupsView(getContext(), group));
         });
     }
 

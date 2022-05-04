@@ -5,13 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @Getter
-public class DeviceGroup implements Serializable {
+public class DeviceGroup {
 
     @Setter
     private Long id = null;
@@ -21,8 +22,18 @@ public class DeviceGroup implements Serializable {
 
     private List<AbstractDevice> devices = new ArrayList<>();
 
-    public void addDevice(AbstractDevice device) {
+    public void addDevice(AbstractDevice device) throws IOException {
+        if (devices.contains(device)) throw new IOException("Невозможно добавить: этот дейвайс уже в группе");
         devices.add(device);
+    }
+
+    public void removeDevice(AbstractDevice device) throws IOException {
+        if (!devices.contains(device)) throw new IOException("Невозможно удалить: такого девайса нет в группе");
+        devices.remove(device);
+    }
+
+    public void removeAllDevices() {
+        devices.clear();
     }
 
 }

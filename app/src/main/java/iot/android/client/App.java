@@ -56,6 +56,7 @@ public class App extends Application {
                 .build();
         activityComponent = DaggerActivityComponent.builder()
                 .houseModule(houseModule)
+                .daoModule(daoModule)
                 .build();
         viewComponent = DaggerViewComponent.builder()
                 .houseModule(houseModule)

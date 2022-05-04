@@ -15,7 +15,7 @@ import iot.android.client.model.device.actuator.AbstractActuator;
 import iot.android.client.model.group.DeviceGroup;
 import iot.android.client.ui.activity.GroupActivity;
 
-public class GroupView extends LinearLayout {
+public class GroupsView extends LinearLayout {
 
     private final DeviceGroup group;
     
@@ -24,7 +24,7 @@ public class GroupView extends LinearLayout {
     private final Button disableAllButton;
     private final ProgressBar progressBar;
 
-    public GroupView(@NonNull Context context, DeviceGroup group) {
+    public GroupsView(@NonNull Context context, DeviceGroup group) {
         super(context);
 
         this.group = group;
@@ -69,13 +69,12 @@ public class GroupView extends LinearLayout {
             });
         });
 
-        setOnLongClickListener(view -> {
+        setOnClickListener(view -> {
             Activity activity = (Activity) view.getContext();
             Intent intent = new Intent(activity, GroupActivity.class);
-            intent.putExtra("group", group);
+            intent.putExtra("group_id", group.getId());
 
             activity.startActivity(intent);
-            return false;
         });
 
     }
