@@ -15,6 +15,7 @@ import iot.android.client.model.device.data.RGBAStripData;
 import iot.android.client.ui.chart.HorizontalBarChartCustomizer;
 import iot.android.client.ui.chart.axis.DateAxisFormatter;
 import iot.android.client.ui.chart.marker.RGBAStripMarker;
+import iot.android.client.ui.utils.DateTimeUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -52,7 +53,7 @@ public class RGBAStripStatisticView extends ConstraintLayout {
         Date nowDate = new Date();
         Timestamp now = new Timestamp(nowDate.getTime());
 
-        Date midnightTodayDate = Date.from(nowDate.toInstant().truncatedTo(ChronoUnit.DAYS));
+        Date midnightTodayDate = DateTimeUtils.truncateToMidnight(nowDate);
         Timestamp midnightToday = new Timestamp(midnightTodayDate.getTime());
 
         strip.requestSampleForPeriod(midnightToday, now, message -> {

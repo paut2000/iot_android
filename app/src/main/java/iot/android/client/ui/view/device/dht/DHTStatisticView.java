@@ -14,6 +14,7 @@ import iot.android.client.ui.chart.LineChartCustomizer;
 import iot.android.client.ui.chart.LineChartDataBuilder;
 import iot.android.client.ui.chart.axis.DateAxisFormatter;
 import iot.android.client.ui.chart.marker.DHTMarker;
+import iot.android.client.ui.utils.DateTimeUtils;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -167,7 +168,7 @@ public class DHTStatisticView extends ConstraintLayout {
         }
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(Date.from(new Date().toInstant().truncatedTo(ChronoUnit.DAYS)));
+        calendar.setTime(DateTimeUtils.truncateToMidnight(new Date()));
         calendar.add(Calendar.DATE, -29);
 
         Date rightDate = calendar.getTime();
@@ -190,9 +191,7 @@ public class DHTStatisticView extends ConstraintLayout {
                     } catch (CloneNotSupportedException e) {
                         e.printStackTrace();
                     }
-                    extreme.setDatetime(Date.from(
-                            extreme.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
-                    ));
+                    extreme.setDatetime(DateTimeUtils.truncateToMidnight(extreme.getDatetime()));
                     entries.add(new Entry(
                             extreme.getDatetime().getTime(),
                             method.apply(extreme).floatValue(),
@@ -212,9 +211,7 @@ public class DHTStatisticView extends ConstraintLayout {
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
-            extreme.setDatetime(Date.from(
-                    extreme.getDatetime().toInstant().truncatedTo(ChronoUnit.DAYS)
-            ));
+            extreme.setDatetime(DateTimeUtils.truncateToMidnight(extreme.getDatetime()));
             entries.add(new Entry(
                     extreme.getDatetime().getTime(),
                     method.apply(extreme).floatValue(),

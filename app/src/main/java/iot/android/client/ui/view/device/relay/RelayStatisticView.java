@@ -18,6 +18,7 @@ import iot.android.client.model.device.data.RelayData;
 import iot.android.client.ui.chart.HorizontalBarChartCustomizer;
 import iot.android.client.ui.chart.axis.DateAxisFormatter;
 import iot.android.client.ui.chart.marker.RelayMarker;
+import iot.android.client.ui.utils.DateTimeUtils;
 import iot.android.client.ui.view.datePicker.DatePickerDialogCreator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -58,11 +59,10 @@ public class RelayStatisticView extends ConstraintLayout {
     }
 
     private void init(Context context) {
-
         Date nowDate = new Date();
         Timestamp now = new Timestamp(nowDate.getTime());
 
-        Date midnightTodayDate = Date.from(nowDate.toInstant().truncatedTo(ChronoUnit.DAYS));
+        Date midnightTodayDate = DateTimeUtils.truncateToMidnight(nowDate);
         Timestamp midnightToday = new Timestamp(midnightTodayDate.getTime());
 
         createChartsForDay(midnightToday, now);
@@ -72,7 +72,13 @@ public class RelayStatisticView extends ConstraintLayout {
             calendar.setTime(new Date(timestamp.getTime()));
             calendar.add(Calendar.DATE, 1);
 
-            createChartsForDay(timestamp, new Timestamp(calendar.getTime().getTime()));
+            Timestamp endOfPeriodTimestamp = new Timestamp(calendar.getTime().getTime());
+
+            if (endOfPeriodTimestamp.compareTo(now) > 0) {
+                endOfPeriodTimestamp = now;
+            }
+
+            createChartsForDay(timestamp, endOfPeriodTimestamp);
         });
 
         datePickerButton.setOnClickListener(view -> {
