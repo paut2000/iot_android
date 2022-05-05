@@ -11,25 +11,33 @@
             android:id="@+id/place_for_devices_container"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
-            android:layout_height="0dp" app:layout_constraintBottom_toTopOf="@+id/add_device_button"/>
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/enable_disable_container"/>
 
-    <Button
-            android:id="@+id/add_device_button"
-            android:text="Изменить состав группы"
+    <LinearLayout
+            android:id="@+id/enable_disable_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" app:layout_constraintBottom_toTopOf="@+id/rename_group_button"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-    <Button
-            android:id="@+id/rename_group_button"
-            android:text="Переименовать группу"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" app:layout_constraintBottom_toTopOf="@+id/delete_group_button"/>
+        <Button
+                android:id="@+id/enable_all_button"
+                android:text="Включить"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"/>
 
-    <Button
-            android:id="@+id/delete_group_button"
-            android:text="Удалить группу"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" app:layout_constraintBottom_toBottomOf="parent"/>
+        <Button
+                android:id="@+id/disable_all_button"
+                android:text="Выключить"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"/>
+
+    </LinearLayout>
 
     <TextView
             android:id="@+id/no_devices_in_group"
@@ -38,5 +46,15 @@
             android:visibility="invisible"
             android:gravity="center"
             android:text="@string/no_devices_in_group"/>
+
+    <ProgressBar
+            android:id="@+id/progress_bar"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/enable_disable_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

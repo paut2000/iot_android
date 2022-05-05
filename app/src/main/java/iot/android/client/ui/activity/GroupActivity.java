@@ -2,15 +2,18 @@ package iot.android.client.ui.activity;
 
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import iot.android.client.App;
+import iot.android.client.R;
 import iot.android.client.dao.GroupDao;
 import iot.android.client.databinding.ActivityGroupBinding;
 import iot.android.client.model.House;
+import iot.android.client.model.device.actuator.AbstractActuator;
 import iot.android.client.model.group.DeviceGroup;
 import iot.android.client.ui.view.device.DevicesView;
 
@@ -28,9 +31,9 @@ public class GroupActivity extends AppCompatActivity {
 
     private FrameLayout placeForDevicesContainer;
     private TextView noDevicesInGroup;
-    private Button addDeviceButton;
-    private Button renameGroupButton;
-    private Button deleteGroupButton;
+    private Button enableButton;
+    private Button disableButton;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +45,9 @@ public class GroupActivity extends AppCompatActivity {
 
         placeForDevicesContainer = binding.placeForDevicesContainer;
         noDevicesInGroup = binding.noDevicesInGroup;
-        addDeviceButton = binding.addDeviceButton;
-        renameGroupButton = binding.renameGroupButton;
-        deleteGroupButton = binding.deleteGroupButton;
+        enableButton = binding.enableAllButton;
+        disableButton = binding.disableAllButton;
+        progressBar = binding.progressBar;
 
         Long id = (Long) getIntent().getExtras().get("group_id");
         group = groupDao.readById(id);
@@ -57,35 +60,83 @@ public class GroupActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        renameGroupButton.setOnClickListener(view -> {
-            createRenameDialog().show();
+        enableButton.setOnClickListener(view -> {
+            setInProgress(true);
+            group.getDevices().forEach(device -> {
+                if (device.isAlive() && device instanceof AbstractActuator) {
+                    ((AbstractActuator) device).enable(() -> {
+                        fillDevicesContainer();
+                    });
+                }
+            });
         });
 
-        deleteGroupButton.setOnClickListener(view -> {
-            createDeleteGroupDialog().show();
+        disableButton.setOnClickListener(view -> {
+            setInProgress(true);
+            group.getDevices().forEach(device -> {
+                if (device.isAlive() && device instanceof AbstractActuator) {
+                    ((AbstractActuator) device).disable(() -> {
+                        fillDevicesContainer();
+                    });
+                }
+            });
         });
-
-        addDeviceButton.setOnClickListener(view -> {
-            createAddDevicesDialog().show();
-        });
-
-        if (group.getDevices().isEmpty()) {
-            noDevicesInGroup.setVisibility(View.VISIBLE);
-            return;
-        }
 
         fillDevicesContainer();
     }
 
+    private void setInProgress(boolean b) {
+        enableButton.setEnabled(!b);
+        disableButton.setEnabled(!b);
+        placeForDevicesContainer.setEnabled(!b);
+        if (b) {
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
     private void fillDevicesContainer() {
+        setInProgress(true);
+
+        if (group.getDevices().isEmpty()) {
+            noDevicesInGroup.setVisibility(View.VISIBLE);
+            setInProgress(false);
+            return;
+        } else {
+            noDevicesInGroup.setVisibility(View.INVISIBLE);
+        }
+
         placeForDevicesContainer.removeAllViews();
         placeForDevicesContainer.addView(new DevicesView(this, group.getDevices()));
+        setInProgress(false);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.group_activity_three_dots_menu, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                finish();
+                break;
+            }
+            case R.id.change_group_structure: {
+                createAddDevicesDialog().show();
+                break;
+            }
+            case R.id.rename_group: {
+                createRenameDialog().show();
+                break;
+            }
+            case R.id.delete_group: {
+                createDeleteGroupDialog().show();
+                break;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
