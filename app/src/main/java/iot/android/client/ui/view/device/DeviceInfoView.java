@@ -1,8 +1,6 @@
 package iot.android.client.ui.view.device;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +15,6 @@ import iot.android.client.dao.DeviceDao;
 import iot.android.client.databinding.DeviceInfoViewBinding;
 import iot.android.client.model.House;
 import iot.android.client.model.device.AbstractDevice;
-import iot.android.client.ui.activity.DeviceActivity;
 
 import javax.inject.Inject;
 
@@ -76,6 +73,7 @@ public class DeviceInfoView extends FrameLayout {
 
     private AlertDialog createChangeNameDialog() {
         EditText editText = new EditText(getContext());
+        editText.setText(device.getName());
         return new AlertDialog.Builder(getContext())
                 .setTitle("Введите новое имя")
                 .setView(editText)
