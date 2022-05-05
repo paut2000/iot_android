@@ -79,7 +79,7 @@ public class GroupActivity extends AppCompatActivity {
 
     private void fillDevicesContainer() {
         placeForDevicesContainer.removeAllViews();
-        placeForDevicesContainer.addView(new DevicesView(getApplicationContext(), group.getDevices()));
+        placeForDevicesContainer.addView(new DevicesView(this, group.getDevices()));
     }
 
     @Override

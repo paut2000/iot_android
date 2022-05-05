@@ -51,7 +51,7 @@ public class DeviceView extends ConstraintLayout {
         name.setText(device.getName());
 
         setOnClickListener(view -> {
-            Activity activity = (Activity) view.getContext();
+            Activity activity = (Activity) context;
             Intent intent = new Intent(activity, DeviceActivity.class);
             intent.putExtra("serialNumber", device.getSerialNumber());
 
