@@ -20,10 +20,10 @@
     </fragment>
 
     <fragment
-            android:id="@+id/statistic_page"
-            android:name="iot.android.client.ui.fragment.StatisticFragment"
-            android:label="@string/fragment_title_statistic"
-            tools:layout="@layout/fragment_statistic"/>
+            android:id="@+id/settings_page"
+            android:name="iot.android.client.ui.fragment.SettingsFragment"
+            android:label="@string/fragment_title_settings"
+            tools:layout="@layout/fragment_settings"/>
     <activity android:id="@+id/groupActivity" android:name="iot.android.client.ui.activity.GroupActivity"
               android:label="activity_group" tools:layout="@layout/activity_group"/>
 

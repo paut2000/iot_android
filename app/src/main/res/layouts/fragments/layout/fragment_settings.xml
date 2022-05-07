@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".ui.fragment.SettingsFragment">
+
+    <TableRow
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp">
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Текущий адрес сервера"/>
+
+        <TextView
+                android:id="@+id/server_ip_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Не подключён"/>
+
+    </TableRow>
+
+    <TableRow
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp">
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Маска подсети"/>
+
+        <TextView
+                android:id="@+id/server_ip_mask_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Не подключён"/>
+
+    </TableRow>
+
+    <TableRow android:layout_margin="10dp">
+
+        <Button
+                android:id="@+id/find_server_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Найти локальный сервер"/>
+
+    </TableRow>
+
+    <TableRow
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp">
+
+        <TextView
+                android:id="@+id/reached_server_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:visibility="invisible"
+                android:text="Доступные сервера"/>
+
+    </TableRow>
+
+    <TableRow android:layout_margin="10dp">
+
+        <LinearLayout
+            android:id="@+id/place_for_servers"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+    </TableRow>
+
+</TableLayout>
