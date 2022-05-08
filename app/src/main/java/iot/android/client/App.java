@@ -1,12 +1,15 @@
 package iot.android.client;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import iot.android.client.dao.DBHelper;
 import iot.android.client.di.component.*;
 import iot.android.client.di.module.ApiModule;
 import iot.android.client.di.module.DaoModule;
 import iot.android.client.di.module.HouseModule;
 import iot.android.client.model.House;
+import iot.android.client.preference.AppPreferences;
 import lombok.Getter;
 
 public class App extends Application {
@@ -33,8 +36,19 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ApiModule apiModule = new ApiModule();
-        DaoModule daoModule = new DaoModule(new DBHelper(getBaseContext()));
+        SharedPreferences preferences =
+                getSharedPreferences(AppPreferences.FILE_NAME, Context.MODE_PRIVATE);
+
+        if (preferences.contains(AppPreferences.SERVER_IP_ADDRESS)) {
+            prepareDagger(preferences.getString(AppPreferences.SERVER_IP_ADDRESS, ""), getBaseContext());
+        } else {
+            prepareDagger("http://192.168.0.1:8080", getBaseContext());
+        }
+    }
+
+    private static void prepareDagger(String serverAddress, Context context) {
+        ApiModule apiModule = new ApiModule(serverAddress);
+        DaoModule daoModule = new DaoModule(new DBHelper(context));
         deviceComponent = DaggerDeviceComponent.builder()
                 .apiModule(apiModule)
                 .build();
@@ -62,6 +76,16 @@ public class App extends Application {
                 .houseModule(houseModule)
                 .daoModule(daoModule)
                 .build();
+    }
+
+    public static void changeServerAddress(String serverAddress, Context context) {
+        SharedPreferences preferences =
+                context.getSharedPreferences(AppPreferences.FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(AppPreferences.SERVER_IP_ADDRESS, serverAddress);
+        editor.apply();
+
+        prepareDagger(serverAddress, context);
     }
 
 }

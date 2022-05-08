@@ -1,6 +1,8 @@
 package iot.android.client.ui.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -13,9 +15,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.MutableLiveData;
+import iot.android.client.App;
 import iot.android.client.R;
 import iot.android.client.databinding.FragmentSettingsBinding;
+import iot.android.client.preference.AppPreferences;
 import iot.android.client.util.pinger.AddressPinger;
 import iot.android.client.util.pinger.IpUtil;
 
@@ -63,15 +68,27 @@ public class SettingsFragment extends Fragment {
     }
 
     private void onServerFind(byte[] address) {
+        String addressString = IpUtil.byteArrayIpToStringIp(address) + ":8080";
         reachedServerLabel.setVisibility(View.VISIBLE);
 
         Button server = new Button(getContext());
         server.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         server.setTextSize(14);
-        server.setText(IpUtil.byteArrayIpToStringIp(address) + ":8080");
+        server.setText(addressString);
 
         server.setOnClickListener(view -> {
-
+            App.changeServerAddress("http://" + addressString, getActivity().getBaseContext());
+            TextView dialogText = new TextView(getContext());
+            dialogText.setText("* Теперь вы подключены к серверу " + addressString +
+                    "\n* Чтобы просмотреть список доступных устройств перейдите во вкладку \"Дом\"");
+            dialogText.setTextSize(14);
+            dialogText.setPadding(50,50,50,50);
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Подключено")
+                    .setView(dialogText)
+                    .setPositiveButton("Окей", (dialogInterface, i) -> {})
+                    .create()
+                    .show();
         });
 
         placeForServers.addView(server);

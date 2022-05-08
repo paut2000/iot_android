@@ -22,8 +22,13 @@ import java.text.SimpleDateFormat;
 @Module
 public class ApiModule {
 
-    private static final String URL = "http://192.168.0.3:8080";
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
+    private final String URL;
+
+    public ApiModule(String URL) {
+        this.URL = URL;
+    }
 
     @Provides
     @Singleton
