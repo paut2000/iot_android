@@ -8,11 +8,11 @@ import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import iot.android.client.App;
 import iot.android.client.R;
 import iot.android.client.dao.GroupDao;
 import iot.android.client.databinding.ActivityGroupBinding;
-import iot.android.client.model.House;
 import iot.android.client.model.device.actuator.AbstractActuator;
 import iot.android.client.model.group.DeviceGroup;
 import iot.android.client.ui.view.device.DevicesView;
@@ -21,13 +21,13 @@ import javax.inject.Inject;
 
 public class GroupActivity extends AppCompatActivity {
 
+    private Long groupId;
     private DeviceGroup group;
 
     @Inject
     GroupDao groupDao;
 
-    @Inject
-    House house;
+    private ActivityVM viewModel;
 
     private FrameLayout placeForDevicesContainer;
     private TextView noDevicesInGroup;
@@ -41,6 +41,8 @@ public class GroupActivity extends AppCompatActivity {
         ActivityGroupBinding binding = ActivityGroupBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        viewModel = new ViewModelProvider(this).get(ActivityVM.class);
+
         App.getActivityComponent().inject(this);
 
         placeForDevicesContainer = binding.placeForDevicesContainer;
@@ -49,13 +51,16 @@ public class GroupActivity extends AppCompatActivity {
         disableButton = binding.disableAllButton;
         progressBar = binding.progressBar;
 
-        Long id = (Long) getIntent().getExtras().get("group_id");
-        group = groupDao.readById(id);
+        groupId = (Long) getIntent().getExtras().get("group_id");
 
-        init();
+        viewModel.getHouseLiveData().observe(this, house -> {
+            init();
+        });
     }
 
     private void init() {
+        group = groupDao.readById(groupId);
+
         getSupportActionBar().setTitle(group.getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -163,6 +168,7 @@ public class GroupActivity extends AppCompatActivity {
                 .setNegativeButton("Нет", (dialogInterface, i) -> {})
                 .setPositiveButton("Да", (dialogInterface, i) -> {
                     groupDao.deleteGroup(group);
+                    finish();
                 })
                 .create();
     }
@@ -172,7 +178,7 @@ public class GroupActivity extends AppCompatActivity {
         deviceCheckBoxesContainer.setOrientation(LinearLayout.VERTICAL);
         deviceCheckBoxesContainer.setGravity(Gravity.CENTER);
 
-        house.getDevices().forEach((serialNumber, device) -> {
+        viewModel.getHouseLiveData().getValue().getDevices().forEach((serialNumber, device) -> {
             CheckBox deviceCheckBox = new CheckBox(this);
             deviceCheckBox.setText(device.getName() + " : " + device.getSerialNumber());
             deviceCheckBox.setChecked(group.getDevices().contains(device));

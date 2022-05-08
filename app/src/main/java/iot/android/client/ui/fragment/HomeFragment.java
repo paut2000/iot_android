@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import iot.android.client.App;
 import iot.android.client.R;
@@ -18,11 +19,10 @@ import javax.inject.Inject;
 
 public class HomeFragment extends Fragment {
 
-    @Inject
-    House house;
-
     private FrameLayout placeForDevicesContainer;
     private SwipeRefreshLayout swipeRefreshLayout;
+
+    private HomeFragmentVM viewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,9 +33,13 @@ public class HomeFragment extends Fragment {
         placeForDevicesContainer = binding.placeForDevicesContainer;
         swipeRefreshLayout = binding.swipeRefresh;
 
-        App.getFragmentComponent().inject(this);
+        viewModel = new ViewModelProvider(this).get(HomeFragmentVM.class);
 
-        createSwipeRefreshLayout();
+        createSwipeRefreshLayout(viewModel.getHouseLiveData().getValue());
+
+        viewModel.getHouseLiveData().observe(this, house -> {
+            fillDeviceContainer(house);
+        });
 
         return view;
     }
@@ -43,13 +47,12 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        fillDeviceContainer();
     }
 
-    private void createSwipeRefreshLayout() {
+    private void createSwipeRefreshLayout(House house) {
         swipeRefreshLayout.setOnRefreshListener(() -> {
             house.refresh(() -> {
-                refillDeviceContainer();
+                refillDeviceContainer(house);
                 swipeRefreshLayout.setRefreshing(false);
             });
             new Handler().postDelayed(() -> {
@@ -63,11 +66,11 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void fillDeviceContainer() {
-        house.refresh(this::refillDeviceContainer);
+    private void fillDeviceContainer(House house) {
+        house.refresh(() -> refillDeviceContainer(house));
     }
 
-    private void refillDeviceContainer() {
+    private void refillDeviceContainer(House house) {
         placeForDevicesContainer.removeAllViews();
         placeForDevicesContainer.addView(new DevicesView(getContext(), house.getDevices().values()));
     }

@@ -32,6 +32,9 @@ public class App extends Application {
     @Getter
     private static ViewComponent viewComponent;
 
+    @Getter
+    private static ViewModelComponent viewModelComponent;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -75,6 +78,9 @@ public class App extends Application {
         viewComponent = DaggerViewComponent.builder()
                 .houseModule(houseModule)
                 .daoModule(daoModule)
+                .build();
+        viewModelComponent = DaggerViewModelComponent.builder()
+                .houseModule(houseModule)
                 .build();
     }
 

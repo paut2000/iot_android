@@ -13,16 +13,12 @@ import iot.android.client.App;
 import iot.android.client.R;
 import iot.android.client.dao.GroupDao;
 import iot.android.client.databinding.FragmentGroupsBinding;
-import iot.android.client.model.House;
 import iot.android.client.model.group.DeviceGroup;
 import iot.android.client.ui.view.group.GroupsView;
 
 import javax.inject.Inject;
 
 public class GroupsFragment extends Fragment {
-
-    @Inject
-    House house;
 
     @Inject
     GroupDao groupDao;

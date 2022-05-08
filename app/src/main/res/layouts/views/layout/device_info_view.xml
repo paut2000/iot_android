@@ -70,28 +70,6 @@
 
         </TableRow>
 
-        <TableRow>
-
-            <Button
-                    android:id="@+id/change_name_button"
-                    android:text="Изменить название"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"/>
-
-        </TableRow>
-
-        <TableRow>
-
-            <Button
-                    android:id="@+id/delete_device_button"
-                    android:text="Удалить"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"/>
-
-        </TableRow>
-
     </TableLayout>
 
 </merge>
