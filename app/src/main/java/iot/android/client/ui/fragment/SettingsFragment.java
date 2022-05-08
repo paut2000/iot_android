@@ -28,7 +28,6 @@ public class SettingsFragment extends Fragment {
 
     private Button findServerButton;
     private TextView serverIpText;
-    private TextView serverIpMaskText;
     private LinearLayout placeForServers;
     private TextView reachedServerLabel;
 
@@ -42,7 +41,6 @@ public class SettingsFragment extends Fragment {
         findServerButton = binding.findServerButton;
         serverIpText = binding.serverIpText;
         placeForServers = binding.placeForServers;
-        serverIpMaskText = binding.serverIpMaskText;
         reachedServerLabel = binding.reachedServerLabel;
 
         init();
@@ -51,6 +49,14 @@ public class SettingsFragment extends Fragment {
     }
 
     private void init() {
+        SharedPreferences preferences =
+                getContext().getSharedPreferences(AppPreferences.FILE_NAME, Context.MODE_PRIVATE);
+
+        if (preferences.contains(AppPreferences.SERVER_IP_ADDRESS)) {
+            String serverIp = preferences.getString(AppPreferences.SERVER_IP_ADDRESS, "");
+            serverIpText.setText(serverIp);
+        }
+
         findServerButton.setOnClickListener(view -> {
             byte[] subnet = IpUtil.getSubnet(requireContext().getApplicationContext());
 
