@@ -31,6 +31,7 @@ public class House {
 
     public House() {
         App.getHouseComponent().inject(this);
+        refresh(()->{});
     }
 
     @JsonIgnore

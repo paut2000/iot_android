@@ -8,14 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="device_background">#C5C2C2</color>
-    <color name="home_background_gradient_1">#2D2D2D</color>
-    <color name="home_background_gradient_2">#52878787</color>
-
-    <color name="group_background">#C5C5C5</color>
-
+    <color name="device_background">@color/material_on_surface_stroke</color>
+    <color name="group_background">@color/material_on_surface_stroke</color>
     <color name="off_rgba">#FF000000</color>
-
-    <color name="chart_marker_background">#CDC5C5C5</color>
+    <color name="chart_marker_background">@color/material_on_surface_stroke</color>
+    <color name="dht_icon">@color/material_on_surface_emphasis_high_type</color>
+    <color name="group_activity_disable_enable_background">@color/material_on_surface_stroke</color>
 
 </resources>

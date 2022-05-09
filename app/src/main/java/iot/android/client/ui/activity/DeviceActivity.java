@@ -72,11 +72,10 @@ public class DeviceActivity extends AppCompatActivity {
 
         try {
             device = viewModel.getHouseLiveData().getValue().getDevice(deviceSerialNumber);
+            init(device);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        init(device);
     }
 
     private void init(AbstractDevice device) {

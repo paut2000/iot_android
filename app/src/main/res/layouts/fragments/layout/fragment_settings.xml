@@ -6,6 +6,19 @@
              tools:context=".ui.fragment.SettingsFragment">
 
     <TableRow
+            android:layout_margin="10dp">
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Текущие настройки"
+                android:textSize="20sp"
+                android:textAlignment="center"/>
+
+    </TableRow>
+
+    <TableRow
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp">
 
@@ -13,7 +26,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Текущий адрес сервера"/>
+                android:text="Адрес сервера"/>
 
         <TextView
                 android:id="@+id/server_ip_text"
@@ -21,6 +34,21 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Не подключён"/>
+
+    </TableRow>
+
+    <TableRow
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="50dp">
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Настройка подключения"
+                android:textSize="20sp"
+                android:textAlignment="center"/>
 
     </TableRow>
 

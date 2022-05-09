@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:background="@color/group_activity_disable_enable_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -26,6 +27,7 @@
         <Button
                 android:id="@+id/enable_all_button"
                 android:text="Включить"
+                android:layout_margin="10dp"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"/>
@@ -33,6 +35,7 @@
         <Button
                 android:id="@+id/disable_all_button"
                 android:text="Выключить"
+                android:layout_margin="10dp"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"/>

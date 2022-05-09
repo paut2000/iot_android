@@ -26,6 +26,7 @@
                     android:id="@+id/add_group_button"
                     android:text="+"
                     android:textSize="20sp"
+                    android:textColor="@color/material_on_surface_emphasis_high_type"
                     android:textAlignment="center"
                     android:background="@drawable/group_background"
                     android:layout_margin="15px"

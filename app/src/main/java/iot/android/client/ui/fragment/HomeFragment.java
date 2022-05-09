@@ -20,7 +20,6 @@ import javax.inject.Inject;
 public class HomeFragment extends Fragment {
 
     private FrameLayout placeForDevicesContainer;
-    private SwipeRefreshLayout swipeRefreshLayout;
 
     private HomeFragmentVM viewModel;
 
@@ -31,43 +30,14 @@ public class HomeFragment extends Fragment {
 
         FragmentHomeBinding binding = FragmentHomeBinding.bind(view);
         placeForDevicesContainer = binding.placeForDevicesContainer;
-        swipeRefreshLayout = binding.swipeRefresh;
 
         viewModel = new ViewModelProvider(this).get(HomeFragmentVM.class);
 
-        createSwipeRefreshLayout(viewModel.getHouseLiveData().getValue());
-
         viewModel.getHouseLiveData().observe(this, house -> {
-            fillDeviceContainer(house);
+            refillDeviceContainer(house);
         });
 
         return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    private void createSwipeRefreshLayout(House house) {
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            house.refresh(() -> {
-                refillDeviceContainer(house);
-                swipeRefreshLayout.setRefreshing(false);
-            });
-            new Handler().postDelayed(() -> {
-                if (swipeRefreshLayout.isRefreshing()) {
-
-                    // TODO: обработать ошибку: невозможно получить обновление
-
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            }, 3000);
-        });
-    }
-
-    private void fillDeviceContainer(House house) {
-        house.refresh(() -> refillDeviceContainer(house));
     }
 
     private void refillDeviceContainer(House house) {

@@ -1,6 +1,7 @@
 package iot.android.client.ui.chart;
 
 import android.graphics.Color;
+import androidx.core.content.res.ResourcesCompat;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
@@ -34,6 +35,9 @@ public class HorizontalBarChartCustomizer {
     }
 
     private void generalPlotLayout() {
+        chart.setNoDataTextColor(Color.parseColor("#DDE6E1E5"));
+        chart.setGridBackgroundColor(Color.parseColor("#DDE6E1E5"));
+        chart.getLegend().setTextColor(Color.parseColor("#DDE6E1E5"));
         chart.setViewPortOffsets(0, 0, 0, 0);
         chart.setDrawBarShadow(false);
         chart.setDrawValueAboveBar(false);
@@ -60,10 +64,10 @@ public class HorizontalBarChartCustomizer {
         YAxis y = chart.getAxisRight();
         y.setEnabled(true);
         y.setLabelCount(6, true);
-        y.setTextColor(Color.BLACK);
+        y.setTextColor(Color.parseColor("#DDE6E1E5"));
         y.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         y.setDrawGridLines(false);
-        y.setAxisLineColor(Color.BLACK);
+        y.setAxisLineColor(Color.parseColor("#DDE6E1E5"));
     }
 
 }

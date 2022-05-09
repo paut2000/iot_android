@@ -34,6 +34,9 @@ public class LineChartCustomizer {
     }
 
     private void generalPlotLayout() {
+        chart.setNoDataTextColor(Color.parseColor("#DDE6E1E5"));
+        chart.setGridBackgroundColor(Color.parseColor("#DDE6E1E5"));
+        chart.getLegend().setTextColor(Color.parseColor("#DDE6E1E5"));
         chart.setViewPortOffsets(100, 100, 100, 100);
         chart.getDescription().setEnabled(false);
         chart.setNoDataText("Нет данных");
@@ -53,19 +56,19 @@ public class LineChartCustomizer {
         XAxis x = chart.getXAxis();
         x.setEnabled(true);
         x.setLabelCount(6, true);
-        x.setTextColor(Color.BLACK);
+        x.setTextColor(Color.parseColor("#DDE6E1E5"));
         x.setPosition(XAxis.XAxisPosition.BOTTOM);
         x.setDrawGridLines(false);
-        x.setAxisLineColor(Color.BLACK);
+        x.setAxisLineColor(Color.parseColor("#DDE6E1E5"));
     }
 
     private void generalYAxisSettings() {
         YAxis y = chart.getAxisLeft();
         y.setLabelCount(6, true);
-        y.setTextColor(Color.BLACK);
+        y.setTextColor(Color.parseColor("#DDE6E1E5"));
         y.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         y.setDrawGridLines(true);
-        y.setAxisLineColor(Color.BLACK);
+        y.setAxisLineColor(Color.parseColor("#DDE6E1E5"));
         chart.getAxisRight().setEnabled(false);
     }
 

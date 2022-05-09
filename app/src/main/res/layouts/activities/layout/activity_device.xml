@@ -15,21 +15,75 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-            <FrameLayout
-                    android:id="@+id/place_for_device_info"
+            <LinearLayout
+                    android:layout_margin="10dp"
+                    android:background="@drawable/device_activity_section_background"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content">
 
-            <FrameLayout
-                    android:id="@+id/place_for_device"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"/>
+                <TextView
+                        android:text="Главное"
+                        android:textSize="20sp"
+                        android:textAlignment="center"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
 
-            <FrameLayout
-                    android:id="@+id/place_for_device_statistic"
+                <FrameLayout
+                        android:id="@+id/place_for_device"
+                        android:layout_margin="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_margin="10dp"
+                    android:background="@drawable/device_activity_section_background"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:text="Статистика"
+                        android:layout_marginTop="10dp"
+                        android:textSize="20sp"
+                        android:textAlignment="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <FrameLayout
+                        android:id="@+id/place_for_device_statistic"
+                        android:layout_margin="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_margin="10dp"
+                    android:background="@drawable/device_activity_section_background"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:text="Информация"
+                        android:layout_marginTop="10dp"
+                        android:textSize="20sp"
+                        android:textAlignment="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <FrameLayout
+                        android:id="@+id/place_for_device_info"
+                        android:layout_margin="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
