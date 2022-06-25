@@ -4,6 +4,14 @@
 
 This app is Anroid-client for Smart Home.
 
+## UML-diagramm
+
+<img src="https://user-images.githubusercontent.com/48650232/175785967-9bb1be5d-aa4e-486d-88cb-05a1137c4bcb.png" alt="drawing"/>
+
+## Entity relation
+
+<img src="https://user-images.githubusercontent.com/48650232/175785998-bf2169ec-106c-4b35-8f26-8277de59c0f4.png" alt="drawing"/>
+
 ## UI description
 
 ### Main Activity
