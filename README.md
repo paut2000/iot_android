@@ -14,6 +14,8 @@ This app is Anroid-client for Smart Home.
 
 ## UI description
 
+![изображение](https://user-images.githubusercontent.com/48650232/175786479-b5317059-87a6-4f02-80ca-b20fa47facdd.png)
+
 ### Main Activity
 
 #### Home Fragment
